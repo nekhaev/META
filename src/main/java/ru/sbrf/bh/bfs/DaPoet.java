@@ -16,7 +16,29 @@ public class DaPoet {
         this.outputDir = outputDir;
     }
 
-    public void makeSimple(ClassName output, ClassName serviceName, ClassName rq, ClassName rs) throws IOException {
+    public void makeSimple(Api api) throws IOException {
+        ClassName output=api.getDaClass();
+        String daMethodName = api.getMethodName();
+        TypeName serviceName = api.getService();
+        ClassName rq = api.getRq();
+        ClassName rs = api.getRs();
+
+        String beanName = "";
+
+        /*
+        отличия разных версий адаптеров
+         */
+        if(serviceName==null) {
+
+            serviceName = ParameterizedTypeName.get(
+                    ClassName.get("ru.sbrf.ufs.integration.module.api.call", "SyncCallClient")
+                        ,rq
+                        ,rs);
+            beanName  = api.getName()+"SyncClient";
+        } else {
+            beanName = CommonPoems.serviceBean(api.getService());
+        }
+
         String beforeCall = "Before DA call";
         String afterCall = "After DA call";
         String exitCall = "Exit DA call";
@@ -27,7 +49,7 @@ public class DaPoet {
                 .beginControlFlow("try")
                     .addStatement("LOGGER.info($S)",beforeCall)
                     .addStatement("rs = $L.sendRequest(new $L<>(rq)).getMessage()"
-                            , CommonPoems.serviceBean(serviceName)
+                            , beanName
                             , ClassName.get("ru.sbrf.ufs.integration.module","RequestDescriptionImpl"))
                     .addStatement("LOGGER.info($S)",afterCall)
                     .addStatement("success = true")
@@ -40,7 +62,7 @@ public class DaPoet {
                 .addStatement("return rs")
                 .build();
 
-        MethodSpec call = MethodSpec.methodBuilder("call")
+        MethodSpec call = MethodSpec.methodBuilder(daMethodName)
                 .addParameter(rq, "rq")
                 .addModifiers(Modifier.PUBLIC)
                 .returns(rs)
@@ -52,7 +74,7 @@ public class DaPoet {
                 .addModifiers(Modifier.PUBLIC)
                 .addMethod(call)
                 .addField(CommonPoems.getLogger(output.simpleName()))
-                .addField(CommonPoems.beanField(serviceName))
+                .addField(serviceName,beanName)
                 .build();
 
         JavaFile javaFile = JavaFile.builder(output.packageName(), da)

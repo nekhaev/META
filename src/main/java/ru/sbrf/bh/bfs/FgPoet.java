@@ -14,11 +14,13 @@ public class FgPoet {
         this.outputDir = outputDir;
     }
 
-    public void makeSimple(ClassName output,
-                           ClassName da,
-                           String daMethod,
-                           ClassName rq,
-                           ClassName rs) throws IOException {
+    public void makeSimple(Api api)  throws IOException {
+
+        ClassName output = api.getFgClass();
+        ClassName da = api.getDaClass();
+        String daMethod = api.getMethodName();
+        ClassName rq = api.getRq();
+        ClassName rs = api.getRs();
 
         String beforeCall = "Before FG call";
         String afterCall = "After FG call";
