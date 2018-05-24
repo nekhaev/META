@@ -1,0 +1,22 @@
+bfs {
+    properties {
+        groupId = "ru.sbrf.efs.app"
+        artifactId = "ru.sbrf.bh.banking.product.smbaccounting"
+        version = "1.3.21-SNAPSHOT"
+        name = "ru.sbrf.bh.banking.product.smbaccounting"
+        description = "БФС. Расчётный счёт"
+        release = "efs2018-1-omni"
+    }
+    build {
+        outputDir = "C:\dev\output\smbaccounting"
+    }
+
+    adapters
+     {
+        srvGetLegalAccountBalance {
+            groupId = "ru.sbrf.ufs.integration.fs"
+            artifactId = "srvGetLegalAccountBalance"
+            version = "27.2.0"
+        }
+    }
+}
