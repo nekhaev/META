@@ -18,11 +18,12 @@ public class FgPoetTest {
     @Test
     public void testMakeSimple() throws IOException {
         FgPoet poet = new FgPoet(outputDir);
-        poet.makeSimple(ClassName.get("ru.sbrf.bh.banking.product.smbaccounting.fg", "SbrfGetLegalAccountBalanceFgService")
-                ,ClassName.get("ru.sbrf.bh.banking.product.smbaccounting.da","SbrfGetLegalAccountBalanceDaService")
-                ,"call"
-                ,ClassName.get("ru.sbrf.ufs.integration.fs.srvgetlegalaccountbalance.dto","LegalBalInqRqType")
-                ,ClassName.get("ru.sbrf.ufs.integration.fs.srvgetlegalaccountbalance.dto","LegalBalInqRsType")
+        poet.makeSimple(new Api()
+                .setFgClass("ru.sbrf.bh.banking.product.smbaccounting.fg.SbrfGetLegalAccountBalanceFgService")
+                .setDaClass("ru.sbrf.bh.banking.product.smbaccounting.da.SbrfGetLegalAccountBalanceDaService")
+                .setMethodName("call")
+                .setRq("ru.sbrf.ufs.integration.fs.srvgetlegalaccountbalance.dto.LegalBalInqRqType")
+                .setRs("ru.sbrf.ufs.integration.fs.srvgetlegalaccountbalance.dto.LegalBalInqRsType")
         );
     }
 }

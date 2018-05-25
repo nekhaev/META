@@ -1,5 +1,6 @@
 package ru.sbrf.bh.bfs;
 
+import com.squareup.javapoet.ClassName;
 import freemarker.template.TemplateException;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -14,17 +15,22 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class Processor {
+
+    Logger logger = Logger.getLogger("logger");
     private HashMap<String, String> properties;
     private HashMap<String, String> build;
     private List<Adapter> adapters;
     private TemplateGenerator templateGenerator;
+    private List<Api> apis;
 
     public Processor() {
         properties = new HashMap<String, String>();
         build = new HashMap<String, String>();
         adapters = new ArrayList<Adapter>();
+        apis = new ArrayList<Api>();
     }
 
     public static void main(String[] args) throws Exception {
@@ -47,6 +53,7 @@ public class Processor {
         HashMap<String, String> p = new HashMap<String, String>();
         HashMap<String, String> b = new HashMap<String, String>();
         List<Adapter> ad = new ArrayList<Adapter>();
+        List<Api> apis = new ArrayList<Api>();
 
         for (bfsParser.GroupContext gc : ((bfsParser.RContext) tree).group()) {
             if ("properties".equals(gc.ID().getText())) {
@@ -75,10 +82,41 @@ public class Processor {
                     }
                 }
             }
+            if ("api".equals(gc.ID().getText())) {
+                for (bfsParser.GroupContext igc : gc.group()) {
+                    String fgClass = null, daClass = null, rq = null, rs = null, service = null, methodName = null
+                            ,apiName = igc.ID().getText();
+                    for (bfsParser.PropertyContext pc : igc.property()) {
+                        String text = trm(pc.STRING().getText());
+                        String name = pc.ID().getText();
+
+                        if ("fgClass".equals(name)) fgClass = text;
+                        if ("daClass".equals(name)) daClass = text;
+                        if ("rq".equals(name)) rq = text;
+                        if ("rs".equals(name)) rs = text;
+                        if ("service".equals(name)) service = text;
+                        if ("methodName".equals(name)) methodName = text;
+                        if ("name".equals(name)) name = text;
+                    }
+                    if (fgClass != null && daClass != null && rq != null
+                            && rs != null
+                            ) {
+                        apis.add(new Api().setFgClass(fgClass)
+                                .setDaClass(daClass)
+                                .setRq(rq)
+                                .setRs(rs)
+                                .setService(service)
+                                .setMethodName(methodName)
+                                .setName(apiName)
+                        );
+                    }
+                }
+            }
         }
         properties = p;
         build = b;
         adapters = ad;
+        this.apis = apis;
     }
 
     public HashMap<String, String> getProperties() {
@@ -127,6 +165,26 @@ public class Processor {
         Writer out = new FileWriter(f);
         templateGenerator.makeFile("pom.ftl",getModel(),out);
         out.close();
+    }
+
+    public void createApi(Api api) throws IOException {
+
+        String methodName = api.getMethodName();
+
+        DaPoet daPoet = new DaPoet(javaPath());
+        daPoet.makeSimple(api);
+        logger.info(api.getDaClass().toString());
+
+        FgPoet poet = new FgPoet(javaPath());
+        poet.makeSimple(api);
+        logger.info(api.getFgClass().toString());
+
+    }
+
+    public void createApiAll() throws IOException {
+        for(Api api: apis) {
+            createApi(api);
+        }
     }
 
     public void initTemplates(String templatePath) throws IOException {

@@ -7,6 +7,7 @@ bfs {
         description = "БФС. Расчётный счёт"
         release = "efs2018-1-omni"
     }
+
     build {
         outputDir = "C:\dev\output\smbaccounting"
     }
@@ -17,6 +18,17 @@ bfs {
             groupId = "ru.sbrf.ufs.integration.fs"
             artifactId = "srvGetLegalAccountBalance"
             version = "27.2.0"
+        }
+    }
+
+    api
+    {
+        getAccountBalance {
+            fgClass = "ru.sbrf.bh.banking.product.smbaccounting.fg.SbrfGetLegalAccountBalanceFgService"
+            daClass = "ru.sbrf.bh.banking.product.smbaccounting.da.SbrfGetLegalAccountBalanceDaService"
+            rq = "ru.sbrf.ufs.integration.fs.srvgetlegalaccountbalance.dto.LegalBalInqRqType"
+            rs = "ru.sbrf.ufs.integration.fs.srvgetlegalaccountbalance.dto.LegalBalInqRsType"
+            service = "ru.sbrf.ufs.integration.fs.srvgetlegalaccountbalance.SrvGetLegalAccountBalanceSyncClient"
         }
     }
 }

@@ -1,0 +1,136 @@
+bfs {
+    properties {
+        groupId = "ru.sbrf.efs.app"
+        artifactId = "ru.sbrf.bh.banking.product.smbaccounting"
+        version = "1.3.21-SNAPSHOT"
+        name = "ru.sbrf.bh.banking.product.smbaccounting"
+        description = "БФС. Расчётный счёт"
+        release = "efs2018-1-omni"
+    }
+
+    build {
+        outputDir = "C:\dev\output\smbaccounting"
+    }
+
+    adapters
+     {
+        srvGetLegalAccountBalance {
+            groupId = "ru.sbrf.ufs.integration.fs"
+            artifactId = "srvGetLegalAccountBalance"
+            version = "27.2.0"
+        }
+        srvOpenLegalAccount {
+            groupId = "ru.sbrf.ufs.integration.fs"
+            artifactId = "srvOpenLegalAccount"
+            version = "28.0.0-SNAPSHOT"
+        }
+        srvCreateRequestInst_002 {
+            groupId = "ru.sbrf.ufs.integration.pprb"
+            artifactId = "srvCreateRequestInst_002"
+            version = "1.1.1-SNAPSHOT"
+        }
+        srvGetRequestInstAndPerformedService_002 {
+            groupId = "ru.sbrf.ufs.integration.pprb"
+            artifactId = "srvGetRequestInstAndPerformedService_002"
+            version = "42.1.0-SNAPSHOT"
+        }
+        srvNotifyRequestInstForServiceUpdate_002 {
+            groupId = "ru.sbrf.ufs.integration.pprb"
+            artifactId = "srvNotifyRequestInstForServiceUpdate_002"
+            version = "36.1.0-SNAPSHOT"
+        }
+        srvExecuteRequestInst_002 {
+            groupId = "ru.sbrf.ufs.integration.pprb"
+            artifactId = "srvExecuteRequestInst_002"
+            version = "38.0.0-SNAPSHOT"
+        }
+        srvSearchRequestInstWithUID_002 {
+            groupId = "ru.sbrf.ufs.integration.pprb"
+            artifactId = "srvSearchRequestInstWithUID_002"
+            version = "26.3.0-SNAPSHOT"
+        }
+        srvUpdateRequestInstAndPerformedService_002 {
+            groupId = "ru.sbrf.ufs.integration.pprb"
+            artifactId = "srvUpdateRequestInstAndPerformedService_002"
+            version = "37.1.0-SNAPSHOT"
+        }
+        srvReserveAccount {
+            groupId = "ru.sbrf.ufs.integration.fs"
+            artifactId = "srvReserveAccount"
+            version = "29.0.0-SNAPSHOT"
+        }
+        srvCreateTaskByApplication {
+            groupId = "ru.sbrf.efs.integration.pprb"
+            artifactId = "srvCreateTaskByApplication"
+            version = "27.2.0-SNAPSHOT"
+        }
+    }
+
+    api
+    {
+        openLegalAccount {
+            fgClass = "ru.sbrf.bh.banking.product.smbaccounting.fg.SbrfOpenLegalAccountFgService"
+            daClass = "ru.sbrf.bh.banking.product.smbaccounting.da.SbrfOpenLegalAccountDaService"
+            rq = "ru.sbrf.ufs.integration.fs.srvopenlegalaccount.dto.OpenLegalAccountRqType"
+            rs = "ru.sbrf.ufs.integration.fs.srvopenlegalaccount.dto.OpenLegalAccountRsType"
+            service = "ru.sbrf.ufs.integration.fs.srvopenlegalaccount.SrvOpenLegalAccountSyncClient"
+        }
+        getAccountBalance {
+            fgClass = "ru.sbrf.bh.banking.product.smbaccounting.fg.SbrfGetLegalAccountBalanceFgService"
+            daClass = "ru.sbrf.bh.banking.product.smbaccounting.da.SbrfGetLegalAccountBalanceDaService"
+            rq = "ru.sbrf.ufs.integration.fs.srvgetlegalaccountbalance.dto.LegalBalInqRqType"
+            rs = "ru.sbrf.ufs.integration.fs.srvgetlegalaccountbalance.dto.LegalBalInqRsType"
+            service = "ru.sbrf.ufs.integration.fs.srvgetlegalaccountbalance.SrvGetLegalAccountBalanceSyncClient"
+        }
+        srvCreateRequestInst_002 {
+            fgClass = "ru.sbrf.bh.banking.product.smbaccounting.fg.SbrfCreateRequestInstFgService"
+            daClass = "ru.sbrf.bh.banking.product.smbaccounting.da.SbrfCreateRequestInstDaService"
+            rq = "ru.sbrf.ufs.integration.pprb.srvCreateRequestInst.v002.dto.CreateRequestInstRqType"
+            rs = "ru.sbrf.ufs.integration.pprb.srvCreateRequestInst.v002.dto.CreateRequestInstRsType"
+        }
+        srvGetRequestInstAndPerformedService_002 {
+            fgClass = "ru.sbrf.bh.banking.product.smbaccounting.fg.SbrfGetRequestInstAndPerformedServiceFgService"
+            daClass = "ru.sbrf.bh.banking.product.smbaccounting.da.SbrfGetRequestInstAndPerformedServiceDaService"
+            rq = "ru.sbrf.ufs.integration.pprb.srvCreateRequestInst.v002.dto.GetRequestInstAndPerformedServiceRqType"
+            rs = "ru.sbrf.ufs.integration.pprb.srvCreateRequestInst.v002.dto.GetRequestInstAndPerformedServiceRsType"
+        }
+        srvNotifyRequestInstForServiceUpdate_002 {
+            fgClass = "ru.sbrf.bh.banking.product.smbaccounting.fg.SbrfNotifyRequestInstForServiceUpdateFgService"
+            daClass = "ru.sbrf.bh.banking.product.smbaccounting.da.SbrfNotifyRequestInstForServiceUpdateDaService"
+            rq = "ru.sbrf.ufs.integration.pprb.srvCreateRequestInst.v002.dto.NotifyRequestInstRqType"
+            rs = "ru.sbrf.ufs.integration.pprb.srvCreateRequestInst.v002.dto.NotifyRequestInstRsType"
+        }
+        srvExecuteRequestInst_002 {
+            fgClass = "ru.sbrf.bh.banking.product.smbaccounting.fg.SbrfExecuteRequestInstFgService"
+            daClass = "ru.sbrf.bh.banking.product.smbaccounting.da.SbrfExecuteRequestInstDaService"
+            rq = "ru.sbrf.ufs.integration.pprb.srvCreateRequestInst.v002.dto.ExecuteRequestInstRqType"
+            rs = "ru.sbrf.ufs.integration.pprb.srvCreateRequestInst.v002.dto.ExecuteRequestInstRsType"
+        }
+        srvSearchRequestInstWithUID_002 {
+            fgClass = "ru.sbrf.bh.banking.product.smbaccounting.fg.SbrfSearchRequestInstWithUIDFgService"
+            daClass = "ru.sbrf.bh.banking.product.smbaccounting.da.SbrfSearchRequestInstWithUIDDaService"
+            rq = "ru.sbrf.ufs.integration.pprb.srvCreateRequestInst.v002.dto.SearchRequestInstWithUIDRqType"
+            rs = "ru.sbrf.ufs.integration.pprb.srvCreateRequestInst.v002.dto.SearchRequestInstWithUIDRsType"
+        }
+        srvUpdateRequestInstAndPerformedService_002 {
+            fgClass = "ru.sbrf.bh.banking.product.smbaccounting.fg.SbrfUpdateRequestInstAndPerformedServiceFgService"
+            daClass = "ru.sbrf.bh.banking.product.smbaccounting.da.UpdateRequestInstAndPerformedServiceDaService"
+            rq = "ru.sbrf.ufs.integration.pprb.srvCreateRequestInst.v002.dto.UpdateRequestInstAndPerformedServiceRqType"
+            rs = "ru.sbrf.ufs.integration.pprb.srvCreateRequestInst.v002.dto.UpdateRequestInstAndPerformedServiceRsType"
+        }
+        srvReserveAccount {
+            fgClass = "ru.sbrf.bh.banking.product.smbaccounting.fg.SbrfReserveAccountFgService"
+            daClass = "ru.sbrf.bh.banking.product.smbaccounting.da.SbrfReserveAccountDaService"
+            rq = "ru.sbrf.ufs.integration.fs.srvreserveaccount.dto.ReserveAccountRqType"
+            rs = "ru.sbrf.ufs.integration.fs.srvreserveaccount.dto.ReserveAccountRsType"
+        }
+
+        /* ППРБ - другие вызовы в DA
+
+если явным образом не указываем класс service адаптера, то предполагаем, что
+он такой: SyncCallClient<Rq, Rs>
+
+        */
+
+    }
+}
