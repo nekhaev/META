@@ -1,5 +1,5 @@
 // Define a grammar called Hello
-grammar bfs;
+grammar Bfs;
 r  : 'bfs' '{' group+ '}' ;         // match keyword hello followed by an identifier
 group: ID '{' ( group | property )* '}' ;
 property: ID '=' STRING ;

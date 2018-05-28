@@ -1,12 +1,12 @@
 package ru.sbrf.bh.bfs;
 
-import com.squareup.javapoet.ClassName;
 import freemarker.template.TemplateException;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.io.FileUtils;
-import ru.sbrf.bh.bfs.grammar.bfsParser;
+import ru.sbrf.bh.bfs.grammar.BfsLexer;
+import ru.sbrf.bh.bfs.grammar.BfsParser;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -35,41 +35,41 @@ public class Processor {
 
     public static void main(String[] args) throws Exception {
         Processor p = new Processor();
-        p.init("/smbaccounting2.bfs");
+        p.init("/smbaccounting3.bfs");
     }
 
     public void init(String config) throws IOException {
         System.out.println("Hello");
-        HelloLexer lexer = new HelloLexer(
+        BfsLexer lexer = new BfsLexer(
                 CharStreams.fromStream(
                         this.getClass().getResourceAsStream(config)
                 ));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
-        HelloParser parser = new HelloParser(tokens);
+        BfsParser parser = new BfsParser(tokens);
         ParseTree tree = parser.r();
 //        ParseTreeWalker walker = new ParseTreeWalker();
-//        walker.walk(new HelloWalker(), tree);
+//        walker.walk(new BfsWalker(), tree);
 
         HashMap<String, String> p = new HashMap<String, String>();
         HashMap<String, String> b = new HashMap<String, String>();
         List<Adapter> ad = new ArrayList<Adapter>();
         List<Api> apis = new ArrayList<Api>();
 
-        for (bfsParser.GroupContext gc : ((bfsParser.RContext) tree).group()) {
+        for (BfsParser.GroupContext gc : ((BfsParser.RContext) tree).group()) {
             if ("properties".equals(gc.ID().getText())) {
-                for (bfsParser.PropertyContext pc : gc.property()) {
+                for (BfsParser.PropertyContext pc : gc.property()) {
                     p.put(pc.ID().getText(), trm(pc.STRING().getText()));
                 }
             }
-            if ("build".equals(gc.ID().getText())) {
-                for (bfsParser.PropertyContext pc : gc.property()) {
+            if ("build".equalsIgnoreCase(gc.ID().getText())) {
+                for (BfsParser.PropertyContext pc : gc.property()) {
                     b.put(pc.ID().getText(), trm(pc.STRING().getText()));
                 }
             }
             if ("adapters".equals(gc.ID().getText())) {
-                for (bfsParser.GroupContext igc : gc.group()) {
+                for (BfsParser.GroupContext igc : gc.group()) {
                     String groupId = null, artifactId = null, version = null;
-                    for (bfsParser.PropertyContext pc : igc.property()) {
+                    for (BfsParser.PropertyContext pc : igc.property()) {
                         String text = trm(pc.STRING().getText());
                         String name = pc.ID().getText();
 
@@ -83,10 +83,10 @@ public class Processor {
                 }
             }
             if ("api".equals(gc.ID().getText())) {
-                for (bfsParser.GroupContext igc : gc.group()) {
+                for (BfsParser.GroupContext igc : gc.group()) {
                     String fgClass = null, daClass = null, rq = null, rs = null, service = null, methodName = null
                             ,apiName = igc.ID().getText();
-                    for (bfsParser.PropertyContext pc : igc.property()) {
+                    for (BfsParser.PropertyContext pc : igc.property()) {
                         String text = trm(pc.STRING().getText());
                         String name = pc.ID().getText();
 
