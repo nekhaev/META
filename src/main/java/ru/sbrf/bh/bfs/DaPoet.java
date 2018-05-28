@@ -1,6 +1,8 @@
 package ru.sbrf.bh.bfs;
 
 import com.squareup.javapoet.*;
+import ru.sbrf.bh.bfs.model.Api;
+import ru.sbrf.bh.bfs.util.CommonUtil;
 
 import javax.lang.model.element.Modifier;
 import java.io.File;
@@ -36,7 +38,7 @@ public class DaPoet {
                         ,rs);
             beanName  = api.getName()+"SyncClient";
         } else {
-            beanName = CommonPoems.serviceBean(api.getService());
+            beanName = CommonUtil.serviceBean(api.getService());
         }
 
         String beforeCall = "Before DA call";
@@ -73,7 +75,7 @@ public class DaPoet {
         TypeSpec da = TypeSpec.classBuilder(output.simpleName())
                 .addModifiers(Modifier.PUBLIC)
                 .addMethod(call)
-                .addField(CommonPoems.getLogger(output.simpleName()))
+                .addField(CommonUtil.getLogger(output.simpleName()))
                 .addField(serviceName,beanName)
                 .build();
 
@@ -137,7 +139,7 @@ public class DaPoet {
         TypeSpec da = TypeSpec.classBuilder(className)
                 .addModifiers(Modifier.PUBLIC)
                 .addMethod(getAll)
-                .addField(CommonPoems.getLogger(className))
+                .addField(CommonUtil.getLogger(className))
                 .addField(FieldSpec.builder(ClassName.get("ru.sbrf.bh.banking.product.smbaccounting.bs", "MonitoringService"), "monitoringService").build())
                 .addField(FieldSpec.builder(ClassName.get("ru.sbrf.bh.banking.product.smbaccounting.bs", "PlatformAuditService"), "auditService").build())
                 .addSuperinterface(ClassName.get("ru.sbrf.bh", "DataAccess"))

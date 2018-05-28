@@ -1,4 +1,4 @@
-package ru.sbrf.bh.bfs;
+package ru.sbrf.bh.bfs.model;
 
 public class Adapter {
     private String groupId;

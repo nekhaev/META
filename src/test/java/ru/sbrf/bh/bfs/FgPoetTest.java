@@ -1,11 +1,12 @@
 package ru.sbrf.bh.bfs;
 
-import com.squareup.javapoet.ClassName;
 import org.testng.annotations.Test;
+import ru.sbrf.bh.bfs.model.Api;
 
 import java.io.File;
 import java.io.IOException;
 
+//TODO: нельзя тесты использовать для генерации - тут надо ее проверять
 public class FgPoetTest {
     File outputDir = new File("C:\\dev\\output\\smbaccounting\\src\\main\\java");
 

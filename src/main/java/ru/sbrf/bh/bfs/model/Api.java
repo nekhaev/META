@@ -1,17 +1,18 @@
-package ru.sbrf.bh.bfs;
+package ru.sbrf.bh.bfs.model;
 
 import com.squareup.javapoet.ClassName;
 
 public class Api {
-    static final String defaultValue = "call";
 
-    ClassName fgClass;
-    ClassName daClass;
-    ClassName rq;
-    ClassName rs;
-    ClassName service;
-    String methodName;
-    String name;
+    private static final String DEFAULT_METHOD_NAME = "call";
+
+    private ClassName fgClass;
+    private ClassName daClass;
+    private ClassName rq;
+    private ClassName rs;
+    private ClassName service;
+    private String methodName;
+    private String name;
 
     public ClassName getFgClass() {
         return fgClass;
@@ -90,7 +91,7 @@ public class Api {
     }
 
     public String getMethodName() {
-        return (methodName==null? defaultValue:methodName);
+        return (methodName==null? DEFAULT_METHOD_NAME :methodName);
     }
 
     public Api setMethodName(String methodName) {
