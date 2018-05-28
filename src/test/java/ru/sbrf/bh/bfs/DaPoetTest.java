@@ -20,7 +20,7 @@ public class DaPoetTest {
         poet.makeSimple(new Api()
                 .setFgClass("ru.sbrf.bh.banking.product.smbaccounting.fg.SbrfGetLegalAccountBalanceFgService")
                 .setDaClass("ru.sbrf.bh.banking.product.smbaccounting.da.SbrfGetLegalAccountBalanceDaService")
-                .setService("ru.sbrf.ufs.integration.fs.srvgetlegalaccountbalance.rvGetLegalAccountBalanceSyncClient")
+                .setService("ru.sbrf.ufs.integration.fs.srvgetlegalaccountbalance.SrvGetLegalAccountBalanceSyncClient")
                 .setMethodName("call")
                 .setRq("ru.sbrf.ufs.integration.fs.srvgetlegalaccountbalance.dto.LegalBalInqRqType")
                 .setRs("ru.sbrf.ufs.integration.fs.srvgetlegalaccountbalance.dto.LegalBalInqRsType")
