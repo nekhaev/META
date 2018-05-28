@@ -1,5 +1,9 @@
 package ru.sbrf.bh.bfs;
 
+
+import static ru.sbrf.bh.bfs.generator.Statement.*;
+import static ru.sbrf.bh.bfs.generator.ControlFlow.*;
+
 import com.squareup.javapoet.*;
 import ru.sbrf.bh.bfs.model.Api;
 import ru.sbrf.bh.bfs.util.CommonUtil;
@@ -10,6 +14,11 @@ import java.io.IOException;
 
 public class FgPoet {
 
+    private static final String BEFORE_FG_CALL = "Before FG call";
+    private static final String AFTER_FG_CALL = "After FG call";
+    private static final String FAILED_FG_CALL = "Failed FG call";
+    private static final String EXIT_FG_CALL = "Exit FG call";
+
     private File outputDir;
 
     public FgPoet(File outputDir) {
@@ -17,49 +26,37 @@ public class FgPoet {
     }
 
     public void makeSimple(Api api)  throws IOException {
-
-        ClassName output = api.getFgClass();
-        ClassName da = api.getDaClass();
-        String daMethod = api.getMethodName();
-        ClassName rq = api.getRq();
-        ClassName rs = api.getRs();
-
-        String beforeCall = "Before FG call";
-        String afterCall = "After FG call";
-        String failCall = "Failed FG call";
-        String exitCall = "Exit FG call";
-
         CodeBlock executeBody = CodeBlock.builder()
-                .addStatement("LOGGER.debug($S)", beforeCall)
-                .addStatement("$T rs = null", rs)
-                .beginControlFlow("try")
-                    .addStatement("rs = $L.$L(rq)", CommonUtil.serviceBean(da), daMethod)
-                    .addStatement("LOGGER.info($S)",afterCall)
-                .nextControlFlow("catch ($T e)", Exception.class)
-                    .addStatement("LOGGER.error($S,e)",failCall)
-                    .addStatement("throw e")
-                .nextControlFlow("finally")
-                    .addStatement("LOGGER.info($S)",exitCall)
+                .addStatement(LOGGER_DEBUG_LEVEL, BEFORE_FG_CALL)
+                .addStatement("$T rs = null", api.getRs())
+                .beginControlFlow(TRY)
+                    .addStatement("rs = $L.$L(rq)", CommonUtil.serviceBean(api.getDaClass()), api.getMethodName())
+                    .addStatement(LOGGER_INFO_LEVEL, AFTER_FG_CALL)
+                .nextControlFlow(CATCH, Exception.class)
+                    .addStatement(LOGGER_ERROR_LEVEL, FAILED_FG_CALL)
+                    .addStatement(EXCEPTION_THROW)
+                .nextControlFlow(FINALLY)
+                    .addStatement(LOGGER_INFO_LEVEL, EXIT_FG_CALL)
                 .endControlFlow()
                 .addStatement("return rs")
                 .build();
 
         MethodSpec execute = MethodSpec.methodBuilder("execute")
-                .addParameter(rq, "rq")
+                .addParameter(api.getRq(), "rq")
                 .addModifiers(Modifier.PUBLIC)
-                .returns(rs)
+                .returns(api.getRs())
                 .addCode(executeBody)
                 .addException(Exception.class)
                 .build();
 
-        TypeSpec fg = TypeSpec.classBuilder(output.simpleName())
+        TypeSpec fg = TypeSpec.classBuilder(api.getFgClass().simpleName())
                 .addModifiers(Modifier.PUBLIC)
                 .addMethod(execute)
-                .addField(CommonUtil.getLogger(output.simpleName()))
-                .addField(CommonUtil.beanField(da))
+                .addField(CommonUtil.getLogger(api.getFgClass().simpleName()))
+                .addField(CommonUtil.beanField(api.getDaClass()))
                 .build();
 
-        JavaFile javaFile = JavaFile.builder(output.packageName(), fg)
+        JavaFile javaFile = JavaFile.builder(api.getFgClass().packageName(), fg)
                 .indent("    ")
                 .build();
 
@@ -73,6 +70,7 @@ public class FgPoet {
                 "SbrfSmbAccountingRequest");
 
         CodeBlock executeBody = CodeBlock.builder()
+                //TODO переписать
                 .addStatement("LOGGER.debug(LOGGER_MESSAGE_FG_CALL.getMessage(SRV_GET_LEGAL_ACCOUNT_BALANCE, acceptor))")
                 .addStatement("SbrfSmbAccountingRequest sbrfSmbAccountingRequest = null")
                 .addStatement("SbrfSmbAccountingRequest result = null")

@@ -1,8 +1,13 @@
 package ru.sbrf.bh.bfs;
 
+import static ru.sbrf.bh.bfs.generator.Statement.*;
+import static ru.sbrf.bh.bfs.generator.ControlFlow.*;
+
 import com.squareup.javapoet.*;
+
 import ru.sbrf.bh.bfs.model.Api;
 import ru.sbrf.bh.bfs.util.CommonUtil;
+
 
 import javax.lang.model.element.Modifier;
 import java.io.File;
@@ -11,6 +16,10 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class DaPoet {
+
+    private final static String BEFORE_DA_CALL = "Before DA call";
+    private final static String AFTER_DA_CALL = "After DA call";
+    private final static String EXIT_DA_CALL = "Exit DA call";
 
     private File outputDir;
 
@@ -41,24 +50,20 @@ public class DaPoet {
             beanName = CommonUtil.serviceBean(api.getService());
         }
 
-        String beforeCall = "Before DA call";
-        String afterCall = "After DA call";
-        String exitCall = "Exit DA call";
-
         CodeBlock callBody = CodeBlock.builder()
                 .addStatement("$T rs = null", rs)
-                .addStatement("boolean success = false")
-                .beginControlFlow("try")
-                    .addStatement("LOGGER.info($S)",beforeCall)
+                .addStatement(INITIALIZE_SUCCESS_FLAG)
+                .beginControlFlow(TRY)
+                    .addStatement(LOGGER_INFO_LEVEL, BEFORE_DA_CALL)
                     .addStatement("rs = $L.sendRequest(new $L<>(rq)).getMessage()"
                             , beanName
                             , ClassName.get("ru.sbrf.ufs.integration.module","RequestDescriptionImpl"))
-                    .addStatement("LOGGER.info($S)",afterCall)
-                    .addStatement("success = true")
-                .nextControlFlow("catch ($T e)", Exception.class)
-                    .addStatement("throw e")
-                .nextControlFlow("finally")
-                    .addStatement("LOGGER.info($S)",exitCall)
+                    .addStatement(LOGGER_INFO_LEVEL, AFTER_DA_CALL)
+                    .addStatement(CHANGE_SUCCESS_FLAG)
+                .nextControlFlow(CATCH, Exception.class)
+                    .addStatement(EXCEPTION_THROW)
+                .nextControlFlow(FINALLY)
+                    .addStatement(LOGGER_INFO_LEVEL, EXIT_DA_CALL)
                 .endControlFlow()
 
                 .addStatement("return rs")
@@ -101,26 +106,27 @@ public class DaPoet {
         ClassName legalBalInqRqType = ClassName.get("ru.sbrf.ufs.integration.fs.srvgetlegalaccountbalance.dto","LegalBalInqRqType");
         ClassName legalBalInqRsType = ClassName.get("ru.sbrf.ufs.integration.fs.srvgetlegalaccountbalance.dto","LegalBalInqRsType");
 
+        //TODO Переписать логгер
         CodeBlock getAllBody = CodeBlock.builder()
                 .addStatement("$T request = acceptor.getSbrfSmbAccountingRequest()", sbrfSmbAccountingRequest)
                 .addStatement("$T rq = null", legalBalInqRqType)
                 .addStatement("$T rs = null", legalBalInqRsType)
-                .addStatement("boolean success = false")
-                .beginControlFlow("try")
+                .addStatement(INITIALIZE_SUCCESS_FLAG)
+                .beginControlFlow(TRY)
                     .addStatement("rq = GetLegalAccountBalanceRqMapper.map(request)")
                     .addStatement("LOGGER.info(LOGGER_MESSAGE_INTEGRATION_ADAPTER_CALL.getMessage(BfsServices.SRV_GET_LEGAL_ACCOUNT_BALANCE))")
                     .addStatement("rs = srvGetLegalAccountBalanceSyncClient.sendRequest(new RequestDescriptionImpl<>(rq)).getMessage()")
                     .addStatement("LOGGER.info(LOGGER_MESSAGE_INTEGRATION_ADAPTER_RETURN.getMessage(BfsServices.SRV_GET_LEGAL_ACCOUNT_BALANCE))")
                     .addStatement("GetLegalAccountBalanceRsMapper.map(rs, request)")
-                    .addStatement("success = true")
-                .nextControlFlow("catch ($T e)", ExecutionException.class)
-                .addStatement("throw e")
-                .nextControlFlow("catch ($T e)", ClassName.get("ru.sbrf.ufs.integration.module.exception","IntegrationException"))
+                    .addStatement(CHANGE_SUCCESS_FLAG)
+                .nextControlFlow(CATCH, ExecutionException.class)
+                .addStatement(EXCEPTION_THROW)
+                .nextControlFlow(CATCH, ClassName.get("ru.sbrf.ufs.integration.module.exception","IntegrationException"))
                     .addStatement("LOGGER.error(LOGGER_MESSAGE_INTEGRATION_ADAPTER_ERROR.getMessage(BfsServices.SRV_GET_LEGAL_ACCOUNT_BALANCE), e)")
                     .addStatement("throw ExecutionExceptionMapper.getExecutionException(e)")
-                .nextControlFlow("catch ($T e)", Exception.class)
+                .nextControlFlow(CATCH, Exception.class)
                     .addStatement("throw new ExecutionException(INTERNAL_ERROR, e)")
-                .nextControlFlow("finally")
+                .nextControlFlow(FINALLY)
                     .addStatement("AuditEventBsService.audit(auditService, UFS_ESB_GETLEGALACCOUNTBALANCESERVICE, rq, rs, success)")
                     .addStatement("MonitoringBsService.notifyEvent(monitoringService, MonitoringEvent.SRV_GET_LEGAL_ACCOUNT_BALANCE.getEvent(success))")
                     .addStatement("LOGGER.debug(LOGGER_MESSAGE_DA_EXIT.getMessage($S, BfsServices.SRV_GET_LEGAL_ACCOUNT_BALANCE))", "getAll")
