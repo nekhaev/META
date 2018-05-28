@@ -30,7 +30,7 @@ public class FgPoet {
                 .addStatement(LOGGER_DEBUG_LEVEL, BEFORE_FG_CALL)
                 .addStatement(INITIALIZE_RESPONSE, api.getRs())
                 .beginControlFlow(TRY)
-                    .addStatement("rs = $L.$L(rq)", CommonUtil.serviceBean(api.getDaClass()), api.getMethodName())
+                    .addStatement(FG_UPDATE_RESPONSE, CommonUtil.serviceBean(api.getDaClass()), api.getMethodName())
                     .addStatement(LOGGER_INFO_LEVEL, AFTER_FG_CALL)
                 .nextControlFlow(CATCH, Exception.class)
                     .addStatement(LOGGER_ERROR_LEVEL, FAILED_FG_CALL)

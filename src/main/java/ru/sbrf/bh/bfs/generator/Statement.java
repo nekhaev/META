@@ -15,6 +15,7 @@ public interface Statement {
 
     String INITIALIZE_RESPONSE = "$T rs = null";
     String RETURN_RESPONSE = "return rs";
-
+    String DA_SEND_REQUEST = "rs = $L.sendRequest(new $L<>(rq)).getMessage()";
+    String FG_UPDATE_RESPONSE = "rs = $L.$L(rq)";
     String INITIALIZE_REQUEST = "$T rq = null";
 }

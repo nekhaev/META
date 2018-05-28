@@ -41,7 +41,7 @@ public class DaPoet {
                 .addStatement(INITIALIZE_SUCCESS_FLAG)
                 .beginControlFlow(TRY)
                     .addStatement(LOGGER_INFO_LEVEL, BEFORE_DA_CALL)
-                    .addStatement("rs = $L.sendRequest(new $L<>(rq)).getMessage()"
+                    .addStatement(DA_SEND_REQUEST
                             , beanName
                             , ClassName.get("ru.sbrf.ufs.integration.module","RequestDescriptionImpl"))
                     .addStatement(LOGGER_INFO_LEVEL, AFTER_DA_CALL)
