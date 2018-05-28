@@ -76,7 +76,8 @@ public class DaPoet {
 
         javaFile.writeTo(outputDir);
     }
-
+//TODO
+    @Deprecated
     public void run(String className) throws IOException {
 
         ClassName acceptor = ClassName.get("ru.sbrf.bh","Acceptor");

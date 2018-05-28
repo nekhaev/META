@@ -64,6 +64,8 @@ public class FgPoet {
 
     }
 
+    //TODO проверить
+    @Deprecated
     public void run(String className) throws IOException {
 
         ClassName sbrfSmbAccountingRequest = ClassName.get("ru.sbrf.bh.banking.product.smbaccounting.vo.request.legacy",
