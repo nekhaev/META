@@ -12,4 +12,9 @@ public interface Statement {
 
     String INITIALIZE_SUCCESS_FLAG = "boolean success = false";
     String CHANGE_SUCCESS_FLAG = "success = true";
+
+    String INITIALIZE_RESPONSE = "$T rs = null";
+    String RETURN_RESPONSE = "return rs";
+
+    String INITIALIZE_REQUEST = "$T rq = null";
 }

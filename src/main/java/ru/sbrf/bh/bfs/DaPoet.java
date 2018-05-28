@@ -4,11 +4,8 @@ import static ru.sbrf.bh.bfs.generator.Statement.*;
 import static ru.sbrf.bh.bfs.generator.ControlFlow.*;
 
 import com.squareup.javapoet.*;
-
 import ru.sbrf.bh.bfs.model.Api;
 import ru.sbrf.bh.bfs.util.CommonUtil;
-
-
 import javax.lang.model.element.Modifier;
 import java.io.File;
 import java.io.IOException;
@@ -28,30 +25,18 @@ public class DaPoet {
     }
 
     public void makeSimple(Api api) throws IOException {
-        ClassName output=api.getDaClass();
-        String daMethodName = api.getMethodName();
-        TypeName serviceName = api.getService();
-        ClassName rq = api.getRq();
-        ClassName rs = api.getRs();
-
-        String beanName = "";
-
         /*
         отличия разных версий адаптеров
          */
-        if(serviceName==null) {
-
-            serviceName = ParameterizedTypeName.get(
-                    ClassName.get("ru.sbrf.ufs.integration.module.api.call", "SyncCallClient")
-                        ,rq
-                        ,rs);
-            beanName  = api.getName()+"SyncClient";
-        } else {
-            beanName = CommonUtil.serviceBean(api.getService());
-        }
+        TypeName serviceName = api.getService() != null ? api.getService() :
+                                                                    ParameterizedTypeName.get(
+                                                                    ClassName.get("ru.sbrf.ufs.integration.module.api.call", "SyncCallClient")
+                                                                    ,api.getRq()
+                                                                    ,api.getRs());
+        String beanName = api.getService() != null ? CommonUtil.serviceBean(api.getService()) : api.getName()+"SyncClient";
 
         CodeBlock callBody = CodeBlock.builder()
-                .addStatement("$T rs = null", rs)
+                .addStatement(INITIALIZE_RESPONSE, api.getRs())
                 .addStatement(INITIALIZE_SUCCESS_FLAG)
                 .beginControlFlow(TRY)
                     .addStatement(LOGGER_INFO_LEVEL, BEFORE_DA_CALL)
@@ -66,25 +51,25 @@ public class DaPoet {
                     .addStatement(LOGGER_INFO_LEVEL, EXIT_DA_CALL)
                 .endControlFlow()
 
-                .addStatement("return rs")
+                .addStatement(RETURN_RESPONSE)
                 .build();
 
-        MethodSpec call = MethodSpec.methodBuilder(daMethodName)
-                .addParameter(rq, "rq")
+        MethodSpec call = MethodSpec.methodBuilder(api.getMethodName())
+                .addParameter(api.getRq(), "rq")
                 .addModifiers(Modifier.PUBLIC)
-                .returns(rs)
+                .returns(api.getRs())
                 .addCode(callBody)
                 .addException(Exception.class)
                 .build();
 
-        TypeSpec da = TypeSpec.classBuilder(output.simpleName())
+        TypeSpec da = TypeSpec.classBuilder(api.getDaClass().simpleName())
                 .addModifiers(Modifier.PUBLIC)
                 .addMethod(call)
-                .addField(CommonUtil.getLogger(output.simpleName()))
+                .addField(CommonUtil.getLogger(api.getDaClass().simpleName()))
                 .addField(serviceName,beanName)
                 .build();
 
-        JavaFile javaFile = JavaFile.builder(output.packageName(), da)
+        JavaFile javaFile = JavaFile.builder(api.getDaClass().packageName(), da)
                 .indent("    ")
                 .build();
 
@@ -109,8 +94,8 @@ public class DaPoet {
         //TODO Переписать логгер
         CodeBlock getAllBody = CodeBlock.builder()
                 .addStatement("$T request = acceptor.getSbrfSmbAccountingRequest()", sbrfSmbAccountingRequest)
-                .addStatement("$T rq = null", legalBalInqRqType)
-                .addStatement("$T rs = null", legalBalInqRsType)
+                .addStatement(INITIALIZE_REQUEST, legalBalInqRqType)
+                .addStatement(INITIALIZE_RESPONSE, legalBalInqRsType)
                 .addStatement(INITIALIZE_SUCCESS_FLAG)
                 .beginControlFlow(TRY)
                     .addStatement("rq = GetLegalAccountBalanceRqMapper.map(request)")

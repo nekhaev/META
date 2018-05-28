@@ -7,7 +7,6 @@ import static ru.sbrf.bh.bfs.generator.ControlFlow.*;
 import com.squareup.javapoet.*;
 import ru.sbrf.bh.bfs.model.Api;
 import ru.sbrf.bh.bfs.util.CommonUtil;
-
 import javax.lang.model.element.Modifier;
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +27,7 @@ public class FgPoet {
     public void makeSimple(Api api)  throws IOException {
         CodeBlock executeBody = CodeBlock.builder()
                 .addStatement(LOGGER_DEBUG_LEVEL, BEFORE_FG_CALL)
-                .addStatement("$T rs = null", api.getRs())
+                .addStatement(INITIALIZE_RESPONSE, api.getRs())
                 .beginControlFlow(TRY)
                     .addStatement("rs = $L.$L(rq)", CommonUtil.serviceBean(api.getDaClass()), api.getMethodName())
                     .addStatement(LOGGER_INFO_LEVEL, AFTER_FG_CALL)
@@ -38,7 +37,7 @@ public class FgPoet {
                 .nextControlFlow(FINALLY)
                     .addStatement(LOGGER_INFO_LEVEL, EXIT_FG_CALL)
                 .endControlFlow()
-                .addStatement("return rs")
+                .addStatement(RETURN_RESPONSE)
                 .build();
 
         MethodSpec execute = MethodSpec.methodBuilder("execute")
