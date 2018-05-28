@@ -19,14 +19,34 @@ public class FgPoet {
     private static final String FAILED_FG_CALL = "Failed FG call";
     private static final String EXIT_FG_CALL = "Exit FG call";
 
-    private File outputDir;
 
-    public FgPoet(File outputDir) {
-        this.outputDir = outputDir;
+    public void makeSimple(Api api, File outputDir)  throws IOException {
+
+        CommonUtil.writeJavaFile(api.getFgClass().packageName(),createFgType(api),outputDir);
+
     }
 
-    public void makeSimple(Api api)  throws IOException {
-        CodeBlock executeBody = CodeBlock.builder()
+    private TypeSpec createFgType(Api api) {
+        return TypeSpec.classBuilder(api.getFgClass().simpleName())
+                .addModifiers(Modifier.PUBLIC)
+                .addMethod(createExecuteMethod(api))
+                .addField(CommonUtil.getLogger(api.getFgClass().simpleName()))
+                .addField(CommonUtil.beanField(api.getDaClass()))
+                .build();
+    }
+
+    private MethodSpec createExecuteMethod(Api api) {
+        return MethodSpec.methodBuilder("execute")
+                .addParameter(api.getRq(), RQ)
+                .addModifiers(Modifier.PUBLIC)
+                .returns(api.getRs())
+                .addCode(createExecuteBody(api))
+                .addException(Exception.class)
+                .build();
+    }
+
+    private CodeBlock createExecuteBody(Api api) {
+        return CodeBlock.builder()
                 .addStatement(LOGGER_DEBUG_LEVEL, BEFORE_FG_CALL)
                 .addStatement(INITIALIZE_RESPONSE, api.getRs())
                 .beginControlFlow(TRY)
@@ -40,33 +60,11 @@ public class FgPoet {
                 .endControlFlow()
                 .addStatement(RETURN_RESPONSE)
                 .build();
-
-        MethodSpec execute = MethodSpec.methodBuilder("execute")
-                .addParameter(api.getRq(), RQ)
-                .addModifiers(Modifier.PUBLIC)
-                .returns(api.getRs())
-                .addCode(executeBody)
-                .addException(Exception.class)
-                .build();
-
-        TypeSpec fg = TypeSpec.classBuilder(api.getFgClass().simpleName())
-                .addModifiers(Modifier.PUBLIC)
-                .addMethod(execute)
-                .addField(CommonUtil.getLogger(api.getFgClass().simpleName()))
-                .addField(CommonUtil.beanField(api.getDaClass()))
-                .build();
-
-        JavaFile javaFile = JavaFile.builder(api.getFgClass().packageName(), fg)
-                .indent("    ")
-                .build();
-
-        javaFile.writeTo(outputDir);
-
     }
 
     //TODO проверить
     @Deprecated
-    public void run(String className) throws IOException {
+    public void run(String className, File outputDir) throws IOException {
 
         ClassName sbrfSmbAccountingRequest = ClassName.get("ru.sbrf.bh.banking.product.smbaccounting.vo.request.legacy",
                 "SbrfSmbAccountingRequest");

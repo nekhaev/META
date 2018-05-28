@@ -19,24 +19,25 @@ public class DaPoet {
     private final static String AFTER_DA_CALL = "After DA call";
     private final static String EXIT_DA_CALL = "Exit DA call";
 
-    private File outputDir;
-
-    public DaPoet(File outputDir) {
-        this.outputDir = outputDir;
-    }
-
-    public void makeSimple(Api api) throws IOException {
+    public void makeSimple(Api api, File outputDir) throws IOException {
         /*
         отличия разных версий адаптеров
          */
-        TypeName serviceName = api.getService() != null ? api.getService() :
-                                                                    ParameterizedTypeName.get(
-                                                                    ClassName.get("ru.sbrf.ufs.integration.module.api.call", "SyncCallClient")
-                                                                    ,api.getRq()
-                                                                    ,api.getRs());
-        String beanName = api.getService() != null ? CommonUtil.serviceBean(api.getService()) : api.getName()+"SyncClient";
 
-        CodeBlock callBody = CodeBlock.builder()
+        CommonUtil.writeJavaFile(api.getDaClass().packageName(),
+                                                    createDa(
+                                                                api,
+                                                                api.getService() != null ? CommonUtil.serviceBean(api.getService()) : api.getName()+"SyncClient",
+                                                                api.getService() != null ? api.getService() :
+                                                                    ParameterizedTypeName.get(
+                                                                            ClassName.get("ru.sbrf.ufs.integration.module.api.call", "SyncCallClient")
+                                                                            ,api.getRq()
+                                                                            ,api.getRs())
+                                                    ),outputDir);
+    }
+
+    private CodeBlock createCallBlock(Api api, String beanName) {
+        return CodeBlock.builder()
                 .addStatement(INITIALIZE_RESPONSE, api.getRs())
                 .addStatement(INITIALIZE_SUCCESS_FLAG)
                 .beginControlFlow(TRY)
@@ -54,31 +55,29 @@ public class DaPoet {
 
                 .addStatement(RETURN_RESPONSE)
                 .build();
+    }
 
-        MethodSpec call = MethodSpec.methodBuilder(api.getMethodName())
+    private MethodSpec createCallMethod(Api api, String beanName){
+        return MethodSpec.methodBuilder(api.getMethodName())
                 .addParameter(api.getRq(), RQ)
                 .addModifiers(Modifier.PUBLIC)
                 .returns(api.getRs())
-                .addCode(callBody)
+                .addCode(createCallBlock(api,beanName))
                 .addException(Exception.class)
                 .build();
+    }
 
-        TypeSpec da = TypeSpec.classBuilder(api.getDaClass().simpleName())
+    private TypeSpec createDa(Api api, String beanName, TypeName serviceName) {
+        return TypeSpec.classBuilder(api.getDaClass().simpleName())
                 .addModifiers(Modifier.PUBLIC)
-                .addMethod(call)
+                .addMethod(createCallMethod(api,beanName))
                 .addField(CommonUtil.getLogger(api.getDaClass().simpleName()))
                 .addField(serviceName,beanName)
                 .build();
-
-        JavaFile javaFile = JavaFile.builder(api.getDaClass().packageName(), da)
-                .indent("    ")
-                .build();
-
-        javaFile.writeTo(outputDir);
     }
 //TODO
     @Deprecated
-    public void run(String className) throws IOException {
+    public void run(String className, File outputDir) throws IOException {
 
         ClassName acceptor = ClassName.get("ru.sbrf.bh","Acceptor");
         WildcardTypeName wtn = WildcardTypeName.subtypeOf(ClassName.OBJECT);

@@ -64,12 +64,12 @@ public class Processor {
 
         String methodName = api.getMethodName();
 
-        DaPoet daPoet = new DaPoet(javaPath());
-        daPoet.makeSimple(api);
+        DaPoet daPoet = new DaPoet();
+        daPoet.makeSimple(api,javaPath());
         LOGGER.info(api.getDaClass().toString());
 
-        FgPoet poet = new FgPoet(javaPath());
-        poet.makeSimple(api);
+        FgPoet poet = new FgPoet();
+        poet.makeSimple(api,javaPath());
         LOGGER.info(api.getFgClass().toString());
 
     }

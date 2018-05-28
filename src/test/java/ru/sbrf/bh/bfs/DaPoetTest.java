@@ -12,13 +12,13 @@ public class DaPoetTest {
 
     @Test
     public void testRun() throws IOException {
-        DaPoet poet = new DaPoet(outputDir);
-        poet.run("SbrfGetLegalAccountBalanceDaService");
+        DaPoet poet = new DaPoet();
+        poet.run("SbrfGetLegalAccountBalanceDaService",outputDir);
     }
 
     @Test
     public void testMakeSimple() throws IOException {
-        DaPoet poet = new DaPoet(outputDir);
+        DaPoet poet = new DaPoet();
         poet.makeSimple(new Api()
                 .setFgClass("ru.sbrf.bh.banking.product.smbaccounting.fg.SbrfGetLegalAccountBalanceFgService")
                 .setDaClass("ru.sbrf.bh.banking.product.smbaccounting.da.SbrfGetLegalAccountBalanceDaService")
@@ -26,7 +26,7 @@ public class DaPoetTest {
                 .setMethodName("call")
                 .setRq("ru.sbrf.ufs.integration.fs.srvgetlegalaccountbalance.dto.LegalBalInqRqType")
                 .setRs("ru.sbrf.ufs.integration.fs.srvgetlegalaccountbalance.dto.LegalBalInqRsType")
-        );
+        ,outputDir);
 
     }
 }

@@ -12,19 +12,19 @@ public class FgPoetTest {
 
     @Test
     public void testRun() throws IOException {
-        FgPoet poet = new FgPoet(outputDir);
-        poet.run("SbrfGetLegalAccountBalanceFgService");
+        FgPoet poet = new FgPoet();
+        poet.run("SbrfGetLegalAccountBalanceFgService",outputDir);
     }
 
     @Test
     public void testMakeSimple() throws IOException {
-        FgPoet poet = new FgPoet(outputDir);
+        FgPoet poet = new FgPoet();
         poet.makeSimple(new Api()
                 .setFgClass("ru.sbrf.bh.banking.product.smbaccounting.fg.SbrfGetLegalAccountBalanceFgService")
                 .setDaClass("ru.sbrf.bh.banking.product.smbaccounting.da.SbrfGetLegalAccountBalanceDaService")
                 .setMethodName("call")
                 .setRq("ru.sbrf.ufs.integration.fs.srvgetlegalaccountbalance.dto.LegalBalInqRqType")
                 .setRs("ru.sbrf.ufs.integration.fs.srvgetlegalaccountbalance.dto.LegalBalInqRsType")
-        );
+        ,outputDir);
     }
 }
