@@ -1,5 +1,6 @@
 package ru.sbrf.bh.bfs;
 
+import static ru.sbrf.bh.bfs.generator.StringConsts.*;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -36,46 +37,46 @@ public class ConfigurationParser {
         List<Api> apis = new ArrayList<Api>();
 
         for (BfsParser.GroupContext gc : ((BfsParser.RContext) tree).group()) {
-            if ("properties".equals(gc.ID().getText())) {
+            if (PROPERTIES.equals(gc.ID().getText())) {
                 for (BfsParser.PropertyContext pc : gc.property()) {
                     p.put(pc.ID().getText(), trm(pc.STRING().getText()));
                 }
             }
-            if ("build".equalsIgnoreCase(gc.ID().getText())) {
+            if (BUILD.equalsIgnoreCase(gc.ID().getText())) {
                 for (BfsParser.PropertyContext pc : gc.property()) {
                     b.put(pc.ID().getText(), trm(pc.STRING().getText()));
                 }
             }
-            if ("adapters".equals(gc.ID().getText())) {
+            if (ADAPTERS.equals(gc.ID().getText())) {
                 for (BfsParser.GroupContext igc : gc.group()) {
                     String groupId = null, artifactId = null, version = null;
                     for (BfsParser.PropertyContext pc : igc.property()) {
                         String text = trm(pc.STRING().getText());
                         String name = pc.ID().getText();
 
-                        if ("groupId".equals(name)) groupId = text;
-                        if ("artifactId".equals(name)) artifactId = text;
-                        if ("version".equals(name)) version = text;
+                        if (GROUP_ID.equals(name)) groupId = text;
+                        if (ARTIFACT_ID.equals(name)) artifactId = text;
+                        if (VERSION.equals(name)) version = text;
                     }
                     if (groupId != null && artifactId != null && version != null) {
                         ad.add(new Adapter(groupId, artifactId, version));
                     }
                 }
             }
-            if ("api".equals(gc.ID().getText())) {
+            if (API.equals(gc.ID().getText())) {
                 for (BfsParser.GroupContext igc : gc.group()) {
                     String fgClass = null, daClass = null, rq = null, rs = null, service = null, methodName = null, apiName = igc.ID().getText();
                     for (BfsParser.PropertyContext pc : igc.property()) {
                         String text = trm(pc.STRING().getText());
                         String name = pc.ID().getText();
 
-                        if ("fgClass".equals(name)) fgClass = text;
-                        if ("daClass".equals(name)) daClass = text;
-                        if ("rq".equals(name)) rq = text;
-                        if ("rs".equals(name)) rs = text;
-                        if ("service".equals(name)) service = text;
-                        if ("methodName".equals(name)) methodName = text;
-                        if ("name".equals(name)) name = text;
+                        if (FG_CLASS.equals(name)) fgClass = text;
+                        if (DA_CLASS.equals(name)) daClass = text;
+                        if (RQ.equals(name)) rq = text;
+                        if (RS.equals(name)) rs = text;
+                        if (SERVICE.equals(name)) service = text;
+                        if (METHOD_NAME.equals(name)) methodName = text;
+                        if (NAME.equals(name)) name = text;
                     }
                     if (fgClass != null && daClass != null && rq != null
                             && rs != null

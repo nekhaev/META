@@ -3,6 +3,7 @@ package ru.sbrf.bh.bfs;
 
 import static ru.sbrf.bh.bfs.generator.Statement.*;
 import static ru.sbrf.bh.bfs.generator.ControlFlow.*;
+import static ru.sbrf.bh.bfs.generator.StringConsts.*;
 
 import com.squareup.javapoet.*;
 import ru.sbrf.bh.bfs.model.Api;
@@ -41,7 +42,7 @@ public class FgPoet {
                 .build();
 
         MethodSpec execute = MethodSpec.methodBuilder("execute")
-                .addParameter(api.getRq(), "rq")
+                .addParameter(api.getRq(), RQ)
                 .addModifiers(Modifier.PUBLIC)
                 .returns(api.getRs())
                 .addCode(executeBody)
