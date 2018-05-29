@@ -3,8 +3,6 @@ package ru.sbrf.bh.bfs.util;
 import com.squareup.javapoet.*;
 
 import javax.lang.model.element.Modifier;
-import java.io.File;
-import java.io.IOException;
 
 public class CommonUtil {
     public static FieldSpec getLogger(String className) {
@@ -27,14 +25,6 @@ public class CommonUtil {
     public static String serviceBean(ClassName serviceName) {
         String simpleServiceName = serviceName.simpleName();
         return simpleServiceName.substring(0, 1).toLowerCase() + simpleServiceName.substring(1);
-    }
-
-    public static void writeJavaFile(String packageName, TypeSpec typeSpec, File outputDir)throws IOException{
-        JavaFile javaFile = JavaFile.builder(packageName, typeSpec)
-                .indent("    ")
-                .build();
-
-        javaFile.writeTo(outputDir);
     }
 
 

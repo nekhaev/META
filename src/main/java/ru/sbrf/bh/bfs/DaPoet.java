@@ -5,6 +5,8 @@ import static ru.sbrf.bh.bfs.generator.ControlFlow.*;
 import static ru.sbrf.bh.bfs.generator.StringConsts.*;
 
 import com.squareup.javapoet.*;
+import ru.sbrf.bh.bfs.generator.MethodPoet;
+import ru.sbrf.bh.bfs.generator.TypePoet;
 import ru.sbrf.bh.bfs.model.Api;
 import ru.sbrf.bh.bfs.util.CommonUtil;
 import javax.lang.model.element.Modifier;
@@ -13,64 +15,64 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class DaPoet {
+public class DaPoet extends TypePoet<Api>{
 
     private final static String BEFORE_DA_CALL = "Before DA call";
     private final static String AFTER_DA_CALL = "After DA call";
     private final static String EXIT_DA_CALL = "Exit DA call";
 
-    public void makeSimple(Api api, File outputDir) throws IOException {
-        /*
-        отличия разных версий адаптеров
-         */
-
-        CommonUtil.writeJavaFile(api.getDaClass().packageName(),
-                                                    createDa(
-                                                                api,
-                                                                api.getService() != null ? CommonUtil.serviceBean(api.getService()) : api.getName()+"SyncClient",
-                                                                api.getService() != null ? api.getService() :
-                                                                    ParameterizedTypeName.get(
-                                                                            ClassName.get("ru.sbrf.ufs.integration.module.api.call", "SyncCallClient")
-                                                                            ,api.getRq()
-                                                                            ,api.getRs())
-                                                    ),outputDir);
-    }
-
-    private CodeBlock createCallBlock(Api api, String beanName) {
-        return CodeBlock.builder()
-                .addStatement(INITIALIZE_RESPONSE, api.getRs())
-                .addStatement(INITIALIZE_SUCCESS_FLAG)
-                .beginControlFlow(TRY)
+    private static class CallMethodPoet extends MethodPoet<Api> {
+        protected CodeBlock createMethodBlock(Api api, String beanName) {
+            return CodeBlock.builder()
+                    .addStatement(INITIALIZE_RESPONSE, api.getRs())
+                    .addStatement(INITIALIZE_SUCCESS_FLAG)
+                    .beginControlFlow(TRY)
                     .addStatement(LOGGER_INFO_LEVEL, BEFORE_DA_CALL)
                     .addStatement(DA_SEND_REQUEST
                             , beanName
                             , ClassName.get("ru.sbrf.ufs.integration.module","RequestDescriptionImpl"))
                     .addStatement(LOGGER_INFO_LEVEL, AFTER_DA_CALL)
                     .addStatement(CHANGE_SUCCESS_FLAG)
-                .nextControlFlow(CATCH, Exception.class)
+                    .nextControlFlow(CATCH, Exception.class)
                     .addStatement(EXCEPTION_THROW)
-                .nextControlFlow(FINALLY)
+                    .nextControlFlow(FINALLY)
                     .addStatement(LOGGER_INFO_LEVEL, EXIT_DA_CALL)
-                .endControlFlow()
+                    .endControlFlow()
 
-                .addStatement(RETURN_RESPONSE)
-                .build();
+                    .addStatement(RETURN_RESPONSE)
+                    .build();
+        }
+
+        protected MethodSpec createMethod(Api api, String beanName){
+            return MethodSpec.methodBuilder(api.getMethodName())
+                    .addParameter(api.getRq(), RQ)
+                    .addModifiers(Modifier.PUBLIC)
+                    .returns(api.getRs())
+                    .addCode(createMethodBlock(api,beanName))
+                    .addException(Exception.class)
+                    .build();
+        }
     }
 
-    private MethodSpec createCallMethod(Api api, String beanName){
-        return MethodSpec.methodBuilder(api.getMethodName())
-                .addParameter(api.getRq(), RQ)
-                .addModifiers(Modifier.PUBLIC)
-                .returns(api.getRs())
-                .addCode(createCallBlock(api,beanName))
-                .addException(Exception.class)
-                .build();
+    protected String getPackageName(Api api) {
+        return api.getDaClass().packageName();
     }
 
-    private TypeSpec createDa(Api api, String beanName, TypeName serviceName) {
+    protected TypeSpec createType(Api api) {
+
+         /*
+        отличия разных версий адаптеров
+         */
+        String beanName = api.getService() != null ? CommonUtil.serviceBean(api.getService()) : api.getName()+"SyncClient";
+        TypeName serviceName = api.getService() != null ? api.getService() :
+                ParameterizedTypeName.get(
+                        ClassName.get("ru.sbrf.ufs.integration.module.api.call", "SyncCallClient")
+                        ,api.getRq()
+                        ,api.getRs());
+
         return TypeSpec.classBuilder(api.getDaClass().simpleName())
                 .addModifiers(Modifier.PUBLIC)
-                .addMethod(createCallMethod(api,beanName))
+                .addMethod((new CallMethodPoet()).createMethod(api,beanName))
                 .addField(CommonUtil.getLogger(api.getDaClass().simpleName()))
                 .addField(serviceName,beanName)
                 .build();

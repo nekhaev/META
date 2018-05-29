@@ -6,61 +6,66 @@ import static ru.sbrf.bh.bfs.generator.ControlFlow.*;
 import static ru.sbrf.bh.bfs.generator.StringConsts.*;
 
 import com.squareup.javapoet.*;
+import ru.sbrf.bh.bfs.generator.MethodPoet;
+import ru.sbrf.bh.bfs.generator.TypePoet;
 import ru.sbrf.bh.bfs.model.Api;
 import ru.sbrf.bh.bfs.util.CommonUtil;
 import javax.lang.model.element.Modifier;
 import java.io.File;
 import java.io.IOException;
 
-public class FgPoet {
+public class FgPoet extends TypePoet<Api>{
 
     private static final String BEFORE_FG_CALL = "Before FG call";
     private static final String AFTER_FG_CALL = "After FG call";
     private static final String FAILED_FG_CALL = "Failed FG call";
     private static final String EXIT_FG_CALL = "Exit FG call";
 
-
-    public void makeSimple(Api api, File outputDir)  throws IOException {
-
-        CommonUtil.writeJavaFile(api.getFgClass().packageName(),createFgType(api),outputDir);
-
+    protected String getPackageName(Api api){
+        return api.getFgClass().packageName();
     }
 
-    private TypeSpec createFgType(Api api) {
+    protected TypeSpec createType(Api api) {
         return TypeSpec.classBuilder(api.getFgClass().simpleName())
                 .addModifiers(Modifier.PUBLIC)
-                .addMethod(createExecuteMethod(api))
+                .addMethod((new ExecuteMethodPoet()).createMethod(api,""))
                 .addField(CommonUtil.getLogger(api.getFgClass().simpleName()))
                 .addField(CommonUtil.beanField(api.getDaClass()))
                 .build();
     }
 
-    private MethodSpec createExecuteMethod(Api api) {
-        return MethodSpec.methodBuilder("execute")
-                .addParameter(api.getRq(), RQ)
-                .addModifiers(Modifier.PUBLIC)
-                .returns(api.getRs())
-                .addCode(createExecuteBody(api))
-                .addException(Exception.class)
-                .build();
-    }
+    private static class ExecuteMethodPoet extends MethodPoet<Api> {
 
-    private CodeBlock createExecuteBody(Api api) {
-        return CodeBlock.builder()
-                .addStatement(LOGGER_DEBUG_LEVEL, BEFORE_FG_CALL)
-                .addStatement(INITIALIZE_RESPONSE, api.getRs())
-                .beginControlFlow(TRY)
+        protected MethodSpec createMethod(Api api, String beanName) {
+            return MethodSpec.methodBuilder("execute")
+                    .addParameter(api.getRq(), RQ)
+                    .addModifiers(Modifier.PUBLIC)
+                    .returns(api.getRs())
+                    .addCode(createMethodBlock(api, beanName))
+                    .addException(Exception.class)
+                    .build();
+        }
+
+        protected CodeBlock createMethodBlock(Api api, String beanName) {
+            return CodeBlock.builder()
+                    .addStatement(LOGGER_DEBUG_LEVEL, BEFORE_FG_CALL)
+                    .addStatement(INITIALIZE_RESPONSE, api.getRs())
+                    .beginControlFlow(TRY)
                     .addStatement(FG_UPDATE_RESPONSE, CommonUtil.serviceBean(api.getDaClass()), api.getMethodName())
                     .addStatement(LOGGER_INFO_LEVEL, AFTER_FG_CALL)
-                .nextControlFlow(CATCH, Exception.class)
+                    .nextControlFlow(CATCH, Exception.class)
                     .addStatement(LOGGER_ERROR_LEVEL, FAILED_FG_CALL)
                     .addStatement(EXCEPTION_THROW)
-                .nextControlFlow(FINALLY)
+                    .nextControlFlow(FINALLY)
                     .addStatement(LOGGER_INFO_LEVEL, EXIT_FG_CALL)
-                .endControlFlow()
-                .addStatement(RETURN_RESPONSE)
-                .build();
+                    .endControlFlow()
+                    .addStatement(RETURN_RESPONSE)
+                    .build();
+        }
+
     }
+
+
 
     //TODO проверить
     @Deprecated
