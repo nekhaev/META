@@ -15,10 +15,10 @@ public abstract class TypePoet<T extends Api> {
 
     private static final Logger LOGGER = Logger.getLogger("logger");
 
-    protected abstract TypeSpec createType(Api api);
-    protected abstract String getPackageName(Api api);
+    protected abstract TypeSpec createType(T api);
+    protected abstract String getPackageName(T api);
 
-    public void makeSimple(Api api, File outputDir){
+    public void makeSimple(T api, File outputDir){
         writeJavaFile(getPackageName(api), createType(api),outputDir);
     }
 
