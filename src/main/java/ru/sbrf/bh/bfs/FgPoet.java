@@ -1,9 +1,9 @@
 package ru.sbrf.bh.bfs;
 
 
-import static ru.sbrf.bh.bfs.generator.Statement.*;
-import static ru.sbrf.bh.bfs.generator.ControlFlow.*;
-import static ru.sbrf.bh.bfs.generator.StringConsts.*;
+import ru.sbrf.bh.bfs.generator.Statement;
+import ru.sbrf.bh.bfs.generator.ControlFlow;
+import ru.sbrf.bh.bfs.generator.StringConsts;
 
 import com.squareup.javapoet.*;
 import ru.sbrf.bh.bfs.generator.MethodPoet;
@@ -38,7 +38,7 @@ public class FgPoet extends TypePoet<Api>{
 
         protected MethodSpec createMethod(Api api, String beanName) {
             return MethodSpec.methodBuilder("execute")
-                    .addParameter(api.getRq(), RQ)
+                    .addParameter(api.getRq(), StringConsts.RQ)
                     .addModifiers(Modifier.PUBLIC)
                     .returns(api.getRs())
                     .addCode(createMethodBlock(api, beanName))
@@ -48,18 +48,18 @@ public class FgPoet extends TypePoet<Api>{
 
         protected CodeBlock createMethodBlock(Api api, String beanName) {
             return CodeBlock.builder()
-                    .addStatement(LOGGER_DEBUG_LEVEL, BEFORE_FG_CALL)
-                    .addStatement(INITIALIZE_RESPONSE, api.getRs())
-                    .beginControlFlow(TRY)
-                    .addStatement(FG_UPDATE_RESPONSE, CommonUtil.serviceBean(api.getDaClass()), api.getMethodName())
-                    .addStatement(LOGGER_INFO_LEVEL, AFTER_FG_CALL)
-                    .nextControlFlow(CATCH, Exception.class)
-                    .addStatement(LOGGER_ERROR_LEVEL, FAILED_FG_CALL)
-                    .addStatement(EXCEPTION_THROW)
-                    .nextControlFlow(FINALLY)
-                    .addStatement(LOGGER_INFO_LEVEL, EXIT_FG_CALL)
+                    .addStatement(Statement.LOGGER_DEBUG_LEVEL, BEFORE_FG_CALL)
+                    .addStatement(Statement.INITIALIZE_RESPONSE, api.getRs())
+                    .beginControlFlow(ControlFlow.TRY)
+                    .addStatement(Statement.FG_UPDATE_RESPONSE, CommonUtil.serviceBean(api.getDaClass()), api.getMethodName())
+                    .addStatement(Statement.LOGGER_INFO_LEVEL, AFTER_FG_CALL)
+                    .nextControlFlow(ControlFlow.CATCH, Exception.class)
+                    .addStatement(Statement.LOGGER_ERROR_LEVEL, FAILED_FG_CALL)
+                    .addStatement(Statement.EXCEPTION_THROW)
+                    .nextControlFlow(ControlFlow.FINALLY)
+                    .addStatement(Statement.LOGGER_INFO_LEVEL, EXIT_FG_CALL)
                     .endControlFlow()
-                    .addStatement(RETURN_RESPONSE)
+                    .addStatement(Statement.RETURN_RESPONSE)
                     .build();
         }
 
