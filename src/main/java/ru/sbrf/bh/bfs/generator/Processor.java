@@ -2,6 +2,7 @@ package ru.sbrf.bh.bfs.generator;
 
 import freemarker.template.TemplateException;
 import org.apache.commons.io.FileUtils;
+import org.apache.maven.shared.invoker.*;
 import ru.sbrf.bh.bfs.model.Api;
 import ru.sbrf.bh.bfs.model.Configuration;
 
@@ -9,6 +10,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
@@ -42,7 +44,7 @@ public class Processor {
     }
 
 
-    private void createPom(TemplateGenerator templateGenerator, Configuration configuration) throws IOException, TemplateException {
+    private File createPom(TemplateGenerator templateGenerator, Configuration configuration) throws IOException, TemplateException {
 
         File f = new File(basePath(configuration), "pom.xml");
         if(!f.createNewFile()) {
@@ -52,6 +54,7 @@ public class Processor {
         Writer out = new FileWriter(f);
         templateGenerator.makeFile("pom.ftl", getModel(configuration),out);
         out.close();
+        return f;
     }
 
 
@@ -63,10 +66,24 @@ public class Processor {
 
     }
 
+    private void jarPackage(File pom) throws IOException,TemplateException{
+        InvocationRequest request = new DefaultInvocationRequest();
+        request.setPomFile(pom);
+        request.setGoals(Arrays.asList("clean","package"));
+
+        try {
+            (new DefaultInvoker()).execute(request);
+        } catch (MavenInvocationException ex) {
+            LOGGER.info(ex.getMessage());
+        }
+
+    }
+
     public void generateBfs(Configuration config,String path, List<TypePoet> poets)throws IOException, TemplateException{
         prepareTargetDir(config);
-        createPom(new TemplateGenerator(path),config);
         config.getApis().forEach(api -> createApi(api, poets, config));
+        File pomFile = createPom(new TemplateGenerator(path),config);
+        jarPackage(pomFile);
     }
 
 
