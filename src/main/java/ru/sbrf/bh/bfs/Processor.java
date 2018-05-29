@@ -2,6 +2,7 @@ package ru.sbrf.bh.bfs;
 
 import freemarker.template.TemplateException;
 import org.apache.commons.io.FileUtils;
+import ru.sbrf.bh.bfs.generator.TypePoet;
 import ru.sbrf.bh.bfs.model.Api;
 import ru.sbrf.bh.bfs.model.Configuration;
 
@@ -64,12 +65,12 @@ public class Processor {
 
         String methodName = api.getMethodName();
 
-        DaPoet daPoet = new DaPoet(javaPath());
-        daPoet.makeSimple(api);
+        DaPoet daPoet = new DaPoet();
+        daPoet.makeSimple(api,javaPath());
         LOGGER.info(api.getDaClass().toString());
 
-        FgPoet poet = new FgPoet(javaPath());
-        poet.makeSimple(api);
+        FgPoet poet = new FgPoet();
+        poet.makeSimple(api,javaPath());
         LOGGER.info(api.getFgClass().toString());
 
     }
@@ -83,6 +84,14 @@ public class Processor {
     public void initTemplates(String templatePath) throws IOException {
         templateGenerator = new TemplateGenerator(templatePath);
 
+    }
+
+    //Может пригодиться, когда классов будет больше
+    public void createApi(Api api, TypePoet... poets)throws IOException {
+        for (TypePoet poet:poets ) {
+            poet.makeSimple(api,javaPath());
+            LOGGER.info(poet.getClass().toString() + "ready");
+        }
     }
 
 
