@@ -18,5 +18,6 @@ public class ProcessorTest {
         p.prepareTargetDir();
         p.createPom();
         p.createApiAll();
+
     }
 }

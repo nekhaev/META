@@ -2,6 +2,7 @@ package ru.sbrf.bh.bfs;
 
 import freemarker.template.TemplateException;
 import org.apache.commons.io.FileUtils;
+import ru.sbrf.bh.bfs.generator.TemplateGenerator;
 import ru.sbrf.bh.bfs.generator.TypePoet;
 import ru.sbrf.bh.bfs.model.Api;
 import ru.sbrf.bh.bfs.model.Configuration;

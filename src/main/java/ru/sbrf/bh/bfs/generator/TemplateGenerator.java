@@ -1,4 +1,4 @@
-package ru.sbrf.bh.bfs;
+package ru.sbrf.bh.bfs.generator;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -32,7 +32,7 @@ public class TemplateGenerator {
         return cfg;
     }
 
-    void makeFile(String templateName, HashMap model, Writer out) throws IOException, TemplateException {
+    public void makeFile(String templateName, HashMap model, Writer out) throws IOException, TemplateException {
         Template temp = cfg.getTemplate(templateName);
 
         temp.process(model, out);
