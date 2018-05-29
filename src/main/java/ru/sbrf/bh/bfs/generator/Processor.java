@@ -22,27 +22,27 @@ public class Processor {
     private static final Logger LOGGER = Logger.getLogger("logger");
 
 
-    public HashMap<String,Object> getModel(Configuration configuration) {
+    private HashMap<String,Object> getModel(Configuration configuration) {
         HashMap<String,Object> model = new HashMap<String, Object>(configuration.getProperties());
         model.put("adapters", configuration.getAdapters());
         return model;
     }
 
-    public File basePath(Configuration configuration) {
+    private File basePath(Configuration configuration) {
         return new File(configuration.getBuild().get("outputDir"));
     }
-    public File javaPath(Configuration configuration) {
+    private File javaPath(Configuration configuration) {
         return new File(basePath(configuration), "src\\main\\java");
     }
 
-    public void prepareTargetDir(Configuration configuration) throws IOException {
+    private void prepareTargetDir(Configuration configuration) throws IOException {
         FileUtils.forceMkdir(basePath(configuration));
         FileUtils.cleanDirectory(basePath(configuration));
         FileUtils.forceMkdir(javaPath(configuration));
     }
 
 
-    public void createPom(TemplateGenerator templateGenerator, Configuration configuration) throws IOException, TemplateException {
+    private void createPom(TemplateGenerator templateGenerator, Configuration configuration) throws IOException, TemplateException {
 
         File f = new File(basePath(configuration), "pom.xml");
         if(!f.createNewFile()) {
@@ -56,19 +56,17 @@ public class Processor {
 
 
     //Может пригодиться, когда классов будет больше
-    public void createApi(Api api, List<TypePoet> poets, Configuration configuration)throws IOException {
-        for (TypePoet poet:poets ) {
-            poet.makeSimple(api,javaPath(configuration));
-            LOGGER.info(poet.getClass().toString() + " ready");
-        }
+    private void createApi(Api api, List<TypePoet> poets, Configuration configuration){
+
+        poets.forEach(poet -> {poet.makeSimple(api,javaPath(configuration));
+                               LOGGER.info(poet.getClass().toString() + " ready");});
+
     }
 
     public void generateBfs(Configuration config,String path, List<TypePoet> poets)throws IOException, TemplateException{
         prepareTargetDir(config);
         createPom(new TemplateGenerator(path),config);
-        for(Api api: config.getApis()) {
-            createApi(api,poets, config);
-        }
+        config.getApis().forEach(api -> createApi(api, poets, config));
     }
 
 

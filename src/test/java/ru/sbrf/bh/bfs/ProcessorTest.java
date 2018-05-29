@@ -20,4 +20,12 @@ public class ProcessorTest {
         p.createApiAll();
 
     }
+
+    @Test
+    public void newProcessorTest() throws IOException, TemplateException {
+        Configuration configuration = ConfigurationParser.parse("/smbaccounting.bfs");
+        ru.sbrf.bh.bfs.generator.Processor processor = new ru.sbrf.bh.bfs.generator.Processor();
+
+        processor.generateBfs(configuration,"src\\main\\resources\\templates\\7.0", PoetFactory.getPoetList());
+    }
 }
