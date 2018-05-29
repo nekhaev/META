@@ -1,4 +1,4 @@
-package ru.sbrf.bh.bfs;
+package ru.sbrf.bh.bfs.util;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
@@ -6,7 +6,7 @@ import com.squareup.javapoet.FieldSpec;
 
 import javax.lang.model.element.Modifier;
 
-public class CommonPoems {
+public class CommonUtil {
     public static FieldSpec getLogger(String className) {
         ClassName loggerFactory = ClassName.get("org.slf4j", "LoggerFactory");
 

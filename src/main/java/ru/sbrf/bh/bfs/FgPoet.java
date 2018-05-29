@@ -1,6 +1,8 @@
 package ru.sbrf.bh.bfs;
 
 import com.squareup.javapoet.*;
+import ru.sbrf.bh.bfs.model.Api;
+import ru.sbrf.bh.bfs.util.CommonUtil;
 
 import javax.lang.model.element.Modifier;
 import java.io.File;
@@ -31,7 +33,7 @@ public class FgPoet {
                 .addStatement("LOGGER.debug($S)", beforeCall)
                 .addStatement("$T rs = null", rs)
                 .beginControlFlow("try")
-                    .addStatement("rs = $L.$L(rq)", CommonPoems.serviceBean(da), daMethod)
+                    .addStatement("rs = $L.$L(rq)", CommonUtil.serviceBean(da), daMethod)
                     .addStatement("LOGGER.info($S)",afterCall)
                 .nextControlFlow("catch ($T e)", Exception.class)
                     .addStatement("LOGGER.error($S,e)",failCall)
@@ -53,8 +55,8 @@ public class FgPoet {
         TypeSpec fg = TypeSpec.classBuilder(output.simpleName())
                 .addModifiers(Modifier.PUBLIC)
                 .addMethod(execute)
-                .addField(CommonPoems.getLogger(output.simpleName()))
-                .addField(CommonPoems.beanField(da))
+                .addField(CommonUtil.getLogger(output.simpleName()))
+                .addField(CommonUtil.beanField(da))
                 .build();
 
         JavaFile javaFile = JavaFile.builder(output.packageName(), fg)
@@ -93,7 +95,7 @@ public class FgPoet {
         TypeSpec fg = TypeSpec.classBuilder(className)
                 .addModifiers(Modifier.PUBLIC)
                 .addMethod(execute)
-                .addField(CommonPoems.getLogger(className))
+                .addField(CommonUtil.getLogger(className))
                 .addField(FieldSpec.builder(ClassName.get("ru.sbrf.bh.banking.product.smbaccounting.bs", "MonitoringService"), "monitoringService").build())
                 .addField(FieldSpec.builder(ClassName.get("ru.sbrf.bh.banking.product.smbaccounting.bs", "PlatformAuditService"), "auditService").build())
                 .addSuperinterface(ClassName.get("ru.sbrf.bh", "DataAccess"))
