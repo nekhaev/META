@@ -22,7 +22,15 @@ public class ProcessorTest {
     }
 
     @Test
-    public void newProcessorTest() throws IOException, TemplateException {
+    public void newProcessorTestV6() throws IOException, TemplateException {
+        Configuration configuration = ConfigurationParser.parse("/smbaccounting.bfs");
+        ru.sbrf.bh.bfs.generator.Processor processor = new ru.sbrf.bh.bfs.generator.Processor();
+
+        processor.generateBfs(configuration,"src\\main\\resources\\templates\\6.9", PoetFactory.getPoetList());
+    }
+
+    @Test
+    public void newProcessorTestV7() throws IOException, TemplateException {
         Configuration configuration = ConfigurationParser.parse("/smbaccounting.bfs");
         ru.sbrf.bh.bfs.generator.Processor processor = new ru.sbrf.bh.bfs.generator.Processor();
 
