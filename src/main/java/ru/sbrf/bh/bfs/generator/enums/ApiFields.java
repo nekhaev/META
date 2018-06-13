@@ -18,8 +18,7 @@ public enum ApiFields {
     NAME ("name", "setName"),
     MONITORING_FAIL_EVENT_NAME("monitoringFailEventName", "setMonitoringFailEventName"),
     MONITORING_SUCCESS_EVENT_NAME( "monitoringSuccessEventName", "setMonitoringSuccessEventName"),
-    MONITORING_METRIC_NAME ("monitoringMetricName","setMonitoringMetricName"),
-    CUSTOM_MONITORING_SERVICE ("monitoringService","setMonitoringService");
+    MONITORING_METRIC_NAME ("monitoringMetricName","setMonitoringMetricName");
 
     private String field;
     private Method method;

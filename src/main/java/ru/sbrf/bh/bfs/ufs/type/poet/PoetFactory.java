@@ -2,9 +2,6 @@ package ru.sbrf.bh.bfs.ufs.type.poet;
 
 import ru.sbrf.bh.bfs.generator.type.api.ApiTypePoet;
 import ru.sbrf.bh.bfs.generator.type.service.ServiceTypePoet;
-import ru.sbrf.bh.bfs.ufs.type.poet.DaPoet;
-import ru.sbrf.bh.bfs.ufs.type.poet.FgPoet;
-import ru.sbrf.bh.bfs.ufs.type.poet.MonitoringPoet;
 
 import java.util.*;
 
@@ -28,7 +25,8 @@ public class PoetFactory {
         private final static Map<String,ServiceTypePoet> poetMap;
         static {
             HashMap<String,ServiceTypePoet> map = new HashMap<>();
-            map.put("monitoringService",new MonitoringPoet());
+            map.put("bfsMonitoringServiceImpl",new BfsMonitoringPoetImpl());
+            map.put("bfsMonitoringService", new BfsMonitoringPoet());
             poetMap = Collections.unmodifiableMap(map);
         }
     }

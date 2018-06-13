@@ -13,7 +13,8 @@ bfs {
     }
 
     services {
-        monitoringService = "ru.sbrf.bh.banking.product.smbaccounting.monitoring"
+        bfsMonitoringService = "ru.sbrf.bh.banking.product.smbaccounting.monitoring"
+        bfsMonitoringServiceImpl = "ru.sbrf.bh.banking.product.smbaccounting.monitoring"
     }
 
     adapters

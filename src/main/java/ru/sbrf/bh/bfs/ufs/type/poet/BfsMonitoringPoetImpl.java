@@ -11,10 +11,11 @@ import javax.lang.model.element.Modifier;
 /**
  * Created by sbt-barsukov-sv on 13.06.2018.
  */
-public class MonitoringPoet extends ServiceTypePoet {
+public class BfsMonitoringPoetImpl extends ServiceTypePoet {
     @Override
     protected TypeSpec createType(String param) {
         return TypeSpec.classBuilder(param)
+                .addSuperinterface(ClassName.get("","BfsMonitoringService"))
                 .addModifiers(Modifier.PUBLIC)
                 .addMethod((new StartMethodPoet()).createMethod(param,""))
                 .addMethod((new StopMethodPoet()).createMethod(param,""))
@@ -74,6 +75,6 @@ public class MonitoringPoet extends ServiceTypePoet {
 
     @Override
     public String getServiceName() {
-        return "MonitoringService";
+        return "BfsMonitoringServiceImpl";
     }
 }

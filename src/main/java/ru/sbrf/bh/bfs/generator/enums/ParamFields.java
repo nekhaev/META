@@ -13,7 +13,8 @@ public enum ParamFields {
     BUILD ("build"),
     ADAPTERS ("adapters"),
 
-    API ("api");
+    API ("api"),
+    MONITORING_SERVICE("bfsMonitoringService");
     private String field;
     ParamFields(String field) {
         this.field=field;

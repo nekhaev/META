@@ -89,10 +89,10 @@ public class Processor {
                                                 LOGGER.info(api.toString());
                                                 createApi(api, apiPoets, config);
                                             });
-        config.getServices().forEach((key,value) -> {ServiceTypePoet servicePoet = servicePoets.get(key);
-                                                        LOGGER.info(key + " "+servicePoet);
+        config.getServices().forEach((serviceName,servicePackage) -> {ServiceTypePoet servicePoet = servicePoets.get(serviceName);
+                                                        LOGGER.info(serviceName + " "+servicePoet);
                                                         if(servicePoet!=null) {
-                                                            servicePoet.makeSimple(value,javaPath(config));
+                                                            servicePoet.makeSimple(servicePackage,javaPath(config));
                                                             LOGGER.info(servicePoet.getClass() +" ready");
                                                         }
                                                         } );

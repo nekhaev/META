@@ -90,7 +90,7 @@ public class ConfigurationParser {
                             && fields.get(ApiFields.RQ) != null
                             && fields.get(ApiFields.RS) != null
                             ) {
-                        final Api api = new Api().setName(apiName).setMonitoringService(s.get("monitoringService"));
+                        final Api api = new Api().setName(apiName).setMonitoringService(s.get(ParamFields.MONITORING_SERVICE.getField())+".BfsMonitoringService");
 
                         Arrays.stream(ApiFields.values()).forEach(apiField -> {
                             try {

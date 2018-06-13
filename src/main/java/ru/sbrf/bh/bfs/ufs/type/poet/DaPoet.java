@@ -76,7 +76,7 @@ public class DaPoet extends ApiTypePoet<Api> {
                 .addModifiers(Modifier.PUBLIC)
                 .addMethod((new CallMethodPoet()).createMethod(api,beanName))
                 .addField(CommonUtil.getLogger(api.getDaClass().simpleName()))
-                .addField(FieldSpec.builder(ClassName.get(api.getMonitoringService(),"MonitoringService"),"monitoringService").build())
+                .addField(FieldSpec.builder(ClassName.bestGuess(api.getMonitoringService()),"monitoringService").build())
                 .addField(serviceName,beanName)
                 .build();
     }
