@@ -12,6 +12,10 @@ bfs {
         outputDir = "C:\dev\output\smbaccounting"
     }
 
+    services {
+        monitoringService = "ru.sbrf.bh.banking.product.smbaccounting.monitoring"
+    }
+
     adapters
      {
         srvGetLegalAccountBalance {
@@ -74,6 +78,8 @@ bfs {
             rq = "ru.sbrf.ufs.integration.fs.srvopenlegalaccount.dto.OpenLegalAccountRqType"
             rs = "ru.sbrf.ufs.integration.fs.srvopenlegalaccount.dto.OpenLegalAccountRsType"
             service = "ru.sbrf.ufs.integration.fs.srvopenlegalaccount.SrvOpenLegalAccountSyncClient"
+            monitoringSuccessEventName = "BFS_OPEN_LEGAL_ACCOUNT"
+            monitoringMetricName = "BFS_OPEN_LEGAL_ACCOUNT"
         }
         getAccountBalance {
             fgClass = "ru.sbrf.bh.banking.product.smbaccounting.fg.SbrfGetLegalAccountBalanceFgService"

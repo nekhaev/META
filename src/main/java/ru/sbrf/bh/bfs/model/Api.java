@@ -13,6 +13,10 @@ public class Api {
     private ClassName service;
     private String methodName;
     private String name;
+    private String monitoringSuccessEventName =  "BFS_SUCCESS_EVENT";
+    private String monitoringFailEventName = "BFS_FAIL_EVENT";
+    private String monitoringMetricName = "BFS_METRIC";
+    private String monitoringService;
 
     public ClassName getFgClass() {
         return fgClass;
@@ -106,5 +110,54 @@ public class Api {
     public Api setName(String name) {
         this.name = name;
         return this;
+    }
+
+    public Api setMonitoringSuccessEventName(String monitoringSuccessEventName){
+        this.monitoringSuccessEventName = monitoringSuccessEventName;
+        return this;
+    }
+
+    public String getMonitoringSuccessEventName(){
+        return monitoringSuccessEventName;
+    }
+
+    public Api setMonitoringMetricName(String monitoringMetricName){
+        this.monitoringMetricName = monitoringMetricName;
+        return this;
+    }
+
+    public String getMonitoringMetricName(){
+        return monitoringMetricName;
+    }
+
+    public Api setMonitoringFailEventName(String monitoringFailEventName){
+        this.monitoringFailEventName = monitoringFailEventName;
+        return this;
+    }
+
+    public String getMonitoringFailEventName(){
+        return monitoringFailEventName;
+    }
+
+
+    public String getMonitoringService() {
+        return monitoringService;
+    }
+
+    public Api setMonitoringService(String monitoringService) {
+        this.monitoringService = monitoringService;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return "Api{" +
+                "methodName='" + methodName + '\'' +
+                ", name='" + name + '\'' +
+                ", monitoringSuccessEventName='" + monitoringSuccessEventName + '\'' +
+                ", monitoringFailEventName='" + monitoringFailEventName + '\'' +
+                ", monitoringMetricName='" + monitoringMetricName + '\'' +
+                ", monitoringService='" + monitoringService + '\'' +
+                '}';
     }
 }

@@ -1,4 +1,4 @@
-package ru.sbrf.bh.bfs.generator;
+package ru.sbrf.bh.bfs.generator.literals;
 
 /**
  * Created by sbt-barsukov-sv on 28.05.2018.

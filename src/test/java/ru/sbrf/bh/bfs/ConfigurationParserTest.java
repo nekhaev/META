@@ -5,6 +5,7 @@ import org.testng.annotations.Test;
 import ru.sbrf.bh.bfs.model.Adapter;
 import ru.sbrf.bh.bfs.model.Api;
 import ru.sbrf.bh.bfs.model.Configuration;
+import ru.sbrf.bh.bfs.ufs.parser.ConfigurationParser;
 
 import java.io.IOException;
 import java.util.HashMap;

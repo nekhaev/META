@@ -1,12 +1,11 @@
-package ru.sbrf.bh.bfs;
-
-import ru.sbrf.bh.bfs.generator.Statement;
-import ru.sbrf.bh.bfs.generator.ControlFlow;
-import ru.sbrf.bh.bfs.generator.StringConsts;
+package ru.sbrf.bh.bfs.ufs.type.poet;
 
 import com.squareup.javapoet.*;
-import ru.sbrf.bh.bfs.generator.MethodPoet;
-import ru.sbrf.bh.bfs.generator.TypePoet;
+import ru.sbrf.bh.bfs.generator.enums.ApiFields;
+import ru.sbrf.bh.bfs.generator.literals.ControlFlow;
+import ru.sbrf.bh.bfs.generator.literals.Statement;
+import ru.sbrf.bh.bfs.generator.method.MethodPoet;
+import ru.sbrf.bh.bfs.generator.type.api.ApiTypePoet;
 import ru.sbrf.bh.bfs.model.Api;
 import ru.sbrf.bh.bfs.util.CommonUtil;
 import javax.lang.model.element.Modifier;
@@ -15,7 +14,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class DaPoet extends TypePoet<Api>{
+public class DaPoet extends ApiTypePoet<Api> {
 
     private final static String BEFORE_DA_CALL = "Before DA call";
     private final static String AFTER_DA_CALL = "After DA call";
@@ -26,14 +25,17 @@ public class DaPoet extends TypePoet<Api>{
             return CodeBlock.builder()
                     .addStatement(Statement.INITIALIZE_RESPONSE, api.getRs())
                     .addStatement(Statement.INITIALIZE_SUCCESS_FLAG)
+                    .addStatement(Statement.MONITORING_SERVICE_START, api.getMonitoringSuccessEventName())
                     .beginControlFlow(ControlFlow.TRY)
                     .addStatement(Statement.LOGGER_INFO_LEVEL, BEFORE_DA_CALL)
                     .addStatement(Statement.DA_SEND_REQUEST
                             , beanName
                             , ClassName.get("ru.sbrf.ufs.integration.module","RequestDescriptionImpl"))
+                    .addStatement(Statement.MONITORING_SERVICE_STOP,api.getMonitoringSuccessEventName(),api.getMonitoringMetricName())
                     .addStatement(Statement.LOGGER_INFO_LEVEL, AFTER_DA_CALL)
                     .addStatement(Statement.CHANGE_SUCCESS_FLAG)
                     .nextControlFlow(ControlFlow.CATCH, Exception.class)
+                    .addStatement(Statement.MONITORING_SERVICE_STOP,api.getMonitoringFailEventName(),api.getMonitoringMetricName())
                     .addStatement(Statement.EXCEPTION_THROW)
                     .nextControlFlow(ControlFlow.FINALLY)
                     .addStatement(Statement.LOGGER_INFO_LEVEL, EXIT_DA_CALL)
@@ -45,7 +47,7 @@ public class DaPoet extends TypePoet<Api>{
 
         protected MethodSpec createMethod(Api api, String beanName){
             return MethodSpec.methodBuilder(api.getMethodName())
-                    .addParameter(api.getRq(), StringConsts.RQ)
+                    .addParameter(api.getRq(), ApiFields.RQ.getField())
                     .addModifiers(Modifier.PUBLIC)
                     .returns(api.getRs())
                     .addCode(createMethodBlock(api,beanName))
@@ -74,6 +76,7 @@ public class DaPoet extends TypePoet<Api>{
                 .addModifiers(Modifier.PUBLIC)
                 .addMethod((new CallMethodPoet()).createMethod(api,beanName))
                 .addField(CommonUtil.getLogger(api.getDaClass().simpleName()))
+                .addField(FieldSpec.builder(ClassName.get(api.getMonitoringService(),"MonitoringService"),"monitoringService").build())
                 .addField(serviceName,beanName)
                 .build();
     }

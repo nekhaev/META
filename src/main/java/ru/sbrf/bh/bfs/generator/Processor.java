@@ -3,6 +3,9 @@ package ru.sbrf.bh.bfs.generator;
 import freemarker.template.TemplateException;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.shared.invoker.*;
+import ru.sbrf.bh.bfs.generator.template.TemplateGenerator;
+import ru.sbrf.bh.bfs.generator.type.api.ApiTypePoet;
+import ru.sbrf.bh.bfs.generator.type.service.ServiceTypePoet;
 import ru.sbrf.bh.bfs.model.Api;
 import ru.sbrf.bh.bfs.model.Configuration;
 
@@ -13,6 +16,7 @@ import java.io.Writer;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -59,7 +63,7 @@ public class Processor {
 
 
     //Может пригодиться, когда классов будет больше
-    private void createApi(Api api, List<TypePoet> poets, Configuration configuration){
+    private void createApi(Api api, List<ApiTypePoet> poets, Configuration configuration){
 
         poets.forEach(poet -> {poet.makeSimple(api,javaPath(configuration));
                                LOGGER.info(poet.getClass().toString() + " ready");});
@@ -79,9 +83,19 @@ public class Processor {
 
     }
 
-    public void generateBfs(Configuration config,String path, List<TypePoet> poets)throws IOException, TemplateException{
+    public void generateBfs(Configuration config,String path, List<ApiTypePoet> apiPoets,Map<String,ServiceTypePoet> servicePoets)throws IOException, TemplateException{
         prepareTargetDir(config);
-        config.getApis().forEach(api -> createApi(api, poets, config));
+        config.getApis().forEach(api -> {
+                                                LOGGER.info(api.toString());
+                                                createApi(api, apiPoets, config);
+                                            });
+        config.getServices().forEach((key,value) -> {ServiceTypePoet servicePoet = servicePoets.get(key);
+                                                        LOGGER.info(key + " "+servicePoet);
+                                                        if(servicePoet!=null) {
+                                                            servicePoet.makeSimple(value,javaPath(config));
+                                                            LOGGER.info(servicePoet.getClass() +" ready");
+                                                        }
+                                                        } );
         File pomFile = createPom(new TemplateGenerator(path),config);
         jarPackage(pomFile);
     }

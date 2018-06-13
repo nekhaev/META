@@ -1,4 +1,4 @@
-package ru.sbrf.bh.bfs.generator;
+package ru.sbrf.bh.bfs.generator.type;
 
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
@@ -11,15 +11,14 @@ import java.util.logging.Logger;
 /**
  * Created by sbt-barsukov-sv on 29.05.2018.
  */
-public abstract class TypePoet<T extends Api> {
+public abstract class TypePoet<T> {
 
     private static final Logger LOGGER = Logger.getLogger("logger");
 
-    protected abstract TypeSpec createType(T api);
-    protected abstract String getPackageName(T api);
+    protected abstract TypeSpec createType(T param);
 
-    public void makeSimple(T api, File outputDir){
-        writeJavaFile(getPackageName(api), createType(api),outputDir);
+    public void makeSimple(String packageName, T param, File outputDir){
+        writeJavaFile(packageName, createType(param),outputDir);
     }
 
     protected static void writeJavaFile(String packageName, TypeSpec typeSpec, File outputDir){

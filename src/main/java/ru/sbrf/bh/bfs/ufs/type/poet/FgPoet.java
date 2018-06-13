@@ -1,20 +1,19 @@
-package ru.sbrf.bh.bfs;
+package ru.sbrf.bh.bfs.ufs.type.poet;
 
-
-import ru.sbrf.bh.bfs.generator.Statement;
-import ru.sbrf.bh.bfs.generator.ControlFlow;
-import ru.sbrf.bh.bfs.generator.StringConsts;
 
 import com.squareup.javapoet.*;
-import ru.sbrf.bh.bfs.generator.MethodPoet;
-import ru.sbrf.bh.bfs.generator.TypePoet;
+import ru.sbrf.bh.bfs.generator.enums.ApiFields;
+import ru.sbrf.bh.bfs.generator.literals.ControlFlow;
+import ru.sbrf.bh.bfs.generator.literals.Statement;
+import ru.sbrf.bh.bfs.generator.method.MethodPoet;
+import ru.sbrf.bh.bfs.generator.type.api.ApiTypePoet;
 import ru.sbrf.bh.bfs.model.Api;
 import ru.sbrf.bh.bfs.util.CommonUtil;
 import javax.lang.model.element.Modifier;
 import java.io.File;
 import java.io.IOException;
 
-public class FgPoet extends TypePoet<Api>{
+public class FgPoet extends ApiTypePoet<Api> {
 
     private static final String BEFORE_FG_CALL = "Before FG call";
     private static final String AFTER_FG_CALL = "After FG call";
@@ -38,7 +37,7 @@ public class FgPoet extends TypePoet<Api>{
 
         protected MethodSpec createMethod(Api api, String beanName) {
             return MethodSpec.methodBuilder("execute")
-                    .addParameter(api.getRq(), StringConsts.RQ)
+                    .addParameter(api.getRq(), ApiFields.RQ.getField())
                     .addModifiers(Modifier.PUBLIC)
                     .returns(api.getRs())
                     .addCode(createMethodBlock(api, beanName))
@@ -70,7 +69,6 @@ public class FgPoet extends TypePoet<Api>{
     //TODO проверить
     @Deprecated
     public void run(String className, File outputDir) throws IOException {
-
         ClassName sbrfSmbAccountingRequest = ClassName.get("ru.sbrf.bh.banking.product.smbaccounting.vo.request.legacy",
                 "SbrfSmbAccountingRequest");
 

@@ -1,4 +1,4 @@
-package ru.sbrf.bh.bfs.generator;
+package ru.sbrf.bh.bfs.generator.template;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;

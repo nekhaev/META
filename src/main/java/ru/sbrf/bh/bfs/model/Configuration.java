@@ -15,12 +15,13 @@ public class Configuration {
     private HashMap<String, String> build;
     private List<Adapter> adapters;
     private List<Api> apis;
+    private HashMap<String, String> services;
 
     public Configuration() {
-        properties = new HashMap<String, String>();
-        build = new HashMap<String, String>();
-        adapters = new ArrayList<Adapter>();
-        apis = new ArrayList<Api>();
+        properties = new HashMap<>();
+        build = new HashMap<>();
+        adapters = new ArrayList<>();
+        apis = new ArrayList<>();
     }
 
     public HashMap<String, String> getProperties() {
@@ -55,4 +56,11 @@ public class Configuration {
         this.apis = apis;
     }
 
+    public HashMap<String, String> getServices() {
+        return services;
+    }
+
+    public void setServices(HashMap<String, String> services) {
+        this.services = services;
+    }
 }

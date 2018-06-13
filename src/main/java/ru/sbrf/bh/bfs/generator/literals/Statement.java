@@ -1,4 +1,4 @@
-package ru.sbrf.bh.bfs.generator;
+package ru.sbrf.bh.bfs.generator.literals;
 
 /**
  * Created by sbt-barsukov-sv on 28.05.2018.
@@ -7,6 +7,9 @@ public interface Statement {
     String LOGGER_INFO_LEVEL = "LOGGER.info($S)";
     String LOGGER_DEBUG_LEVEL = "LOGGER.debug($S)";
     String LOGGER_ERROR_LEVEL = "LOGGER.error($S,e)";
+
+    String MONITORING_SERVICE_START = "long startTime = monitoringService.start($S)";
+    String MONITORING_SERVICE_STOP = "monitoringService.stop($S,$S,startTime)";
 
     String EXCEPTION_THROW = "throw e";
 
