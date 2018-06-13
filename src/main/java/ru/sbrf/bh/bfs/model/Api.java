@@ -16,7 +16,7 @@ public class Api {
     private String monitoringSuccessEventName =  "BFS_SUCCESS_EVENT";
     private String monitoringFailEventName = "BFS_FAIL_EVENT";
     private String monitoringMetricName = "BFS_METRIC";
-    private String monitoringService;
+    private ClassName monitoringService;
 
     public ClassName getFgClass() {
         return fgClass;
@@ -140,12 +140,12 @@ public class Api {
     }
 
 
-    public String getMonitoringService() {
+    public ClassName getMonitoringService() {
         return monitoringService;
     }
 
     public Api setMonitoringService(String monitoringService) {
-        this.monitoringService = monitoringService;
+        this.monitoringService = toCN(monitoringService);
         return this;
     }
 

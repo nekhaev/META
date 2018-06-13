@@ -3,6 +3,7 @@ package ru.sbrf.bh.bfs.ufs.type.poet;
 
 import com.squareup.javapoet.*;
 import ru.sbrf.bh.bfs.generator.enums.ApiFields;
+import ru.sbrf.bh.bfs.generator.literals.BeanNames;
 import ru.sbrf.bh.bfs.generator.literals.ControlFlow;
 import ru.sbrf.bh.bfs.generator.literals.Statement;
 import ru.sbrf.bh.bfs.generator.method.MethodPoet;
@@ -27,30 +28,30 @@ public class FgPoet extends ApiTypePoet<Api> {
     protected TypeSpec createType(Api api) {
         return TypeSpec.classBuilder(api.getFgClass().simpleName())
                 .addModifiers(Modifier.PUBLIC)
-                .addMethod((new ExecuteMethodPoet()).createMethod(api,""))
+                .addMethod((new ExecuteMethodPoet()).createMethod(api))
                 .addField(CommonUtil.getLogger(api.getFgClass().simpleName()))
-                .addField(CommonUtil.beanField(api.getDaClass()))
+                .addField(CommonUtil.beanField(api.getDaClass(), BeanNames.DATA_ACCESS_BEAN))
                 .build();
     }
 
     private static class ExecuteMethodPoet extends MethodPoet<Api> {
 
-        protected MethodSpec createMethod(Api api, String beanName) {
+        protected MethodSpec createMethod(Api api) {
             return MethodSpec.methodBuilder("execute")
                     .addParameter(api.getRq(), ApiFields.RQ.getField())
                     .addModifiers(Modifier.PUBLIC)
                     .returns(api.getRs())
-                    .addCode(createMethodBlock(api, beanName))
+                    .addCode(createMethodBlock(api))
                     .addException(Exception.class)
                     .build();
         }
 
-        protected CodeBlock createMethodBlock(Api api, String beanName) {
+        protected CodeBlock createMethodBlock(Api api) {
             return CodeBlock.builder()
                     .addStatement(Statement.LOGGER_DEBUG_LEVEL, BEFORE_FG_CALL)
                     .addStatement(Statement.INITIALIZE_RESPONSE, api.getRs())
                     .beginControlFlow(ControlFlow.TRY)
-                    .addStatement(Statement.FG_UPDATE_RESPONSE, CommonUtil.serviceBean(api.getDaClass()), api.getMethodName())
+                    .addStatement(Statement.FG_UPDATE_RESPONSE, BeanNames.DATA_ACCESS_BEAN, api.getMethodName())
                     .addStatement(Statement.LOGGER_INFO_LEVEL, AFTER_FG_CALL)
                     .nextControlFlow(ControlFlow.CATCH, Exception.class)
                     .addStatement(Statement.LOGGER_ERROR_LEVEL, FAILED_FG_CALL)

@@ -9,6 +9,6 @@ import ru.sbrf.bh.bfs.model.Api;
  */
 public abstract class MethodPoet<T> {
 
-    protected abstract CodeBlock createMethodBlock(T api, String beanName);
-    protected abstract MethodSpec createMethod(T api, String beanName);
+    protected abstract CodeBlock createMethodBlock(T api);
+    protected abstract MethodSpec createMethod(T api);
 }

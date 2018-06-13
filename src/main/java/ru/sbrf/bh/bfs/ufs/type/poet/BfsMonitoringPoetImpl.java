@@ -1,7 +1,9 @@
 package ru.sbrf.bh.bfs.ufs.type.poet;
 
 import com.squareup.javapoet.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.sbrf.bh.bfs.generator.literals.ControlFlow;
+import ru.sbrf.bh.bfs.generator.literals.Services;
 import ru.sbrf.bh.bfs.generator.method.MethodPoet;
 import ru.sbrf.bh.bfs.generator.type.service.ServiceTypePoet;
 import ru.sbrf.bh.bfs.util.CommonUtil;
@@ -11,23 +13,23 @@ import javax.lang.model.element.Modifier;
 /**
  * Created by sbt-barsukov-sv on 13.06.2018.
  */
-public class BfsMonitoringPoetImpl extends ServiceTypePoet {
+public class BfsMonitoringPoetImpl extends BfsMonitoringPoet {
     @Override
     protected TypeSpec createType(String param) {
         return TypeSpec.classBuilder(param)
-                .addSuperinterface(ClassName.get("","BfsMonitoringService"))
+                .addSuperinterface(ClassName.get("", Services.MONITORING))
                 .addModifiers(Modifier.PUBLIC)
-                .addMethod((new StartMethodPoet()).createMethod(param,""))
-                .addMethod((new StopMethodPoet()).createMethod(param,""))
+                .addMethod((new StartMethodPoet()).createMethod(param))
+                .addMethod((new StopMethodPoet()).createMethod(param))
                 .addField(CommonUtil.getLogger(param))
-                .addField(FieldSpec.builder(ClassName.get("ru.sbrf.ufs.platform.monitoring", "MonitoringService"), "monitoringService").build())
+                .addField(CommonUtil.beanField(ClassName.get("ru.sbrf.ufs.platform.monitoring", "MonitoringService"), "monitoringService"))
                 .build();
     }
 
 
-    private static class StartMethodPoet extends MethodPoet<String> {
+    private static class StartMethodPoet extends BfsMonitoringPoet.AbstractStartMethodPoet {
         @Override
-        protected CodeBlock createMethodBlock(String param, String beanName) {
+        protected CodeBlock createMethodBlock(String param) {
             return CodeBlock.builder()
                     .beginControlFlow(ControlFlow.TRY)
                     .addStatement("monitoringService.notifyEvent(monitoringSuccessEvent)")
@@ -35,22 +37,11 @@ public class BfsMonitoringPoetImpl extends ServiceTypePoet {
                     .endControlFlow()
                     .addStatement("return System.currentTimeMillis()").build();
         }
-
-        @Override
-        protected MethodSpec createMethod(String param, String beanName) {
-            return MethodSpec.methodBuilder("start")
-                    .addModifiers(Modifier.PUBLIC)
-                    .returns(TypeName.LONG)
-                    .addCode(createMethodBlock(param,beanName))
-                    .addParameter(ClassName.get(String.class),"monitoringSuccessEvent")
-                    .addException(Exception.class)
-                    .build();
-        }
     }
 
-   private static class StopMethodPoet extends MethodPoet<String> {
+   private static class StopMethodPoet extends BfsMonitoringPoet.AbstractStopMethodPoet {
        @Override
-       protected CodeBlock createMethodBlock(String param, String beanName) {
+       protected CodeBlock createMethodBlock(String param) {
            return CodeBlock.builder()
                    .beginControlFlow(ControlFlow.TRY)
                    .addStatement("monitoringService.notifyEvent(monitoringEvent)")
@@ -58,23 +49,10 @@ public class BfsMonitoringPoetImpl extends ServiceTypePoet {
                    .nextControlFlow(ControlFlow.CATCH, Exception.class)
                    .endControlFlow().build();
        }
-
-       @Override
-       protected MethodSpec createMethod(String param, String beanName) {
-           return MethodSpec.methodBuilder("stop")
-                   .addModifiers(Modifier.PUBLIC)
-                   .addParameter(ClassName.get(String.class),"monitoringEvent")
-                   .addParameter(ClassName.get(String.class),"monitoringMetric")
-                   .addParameter(TypeName.LONG,"timeStartProcess")
-                   .returns(TypeName.VOID)
-                   .addCode(createMethodBlock(param,beanName))
-                   .addException(Exception.class)
-                   .build();
-       }
    }
 
     @Override
     public String getServiceName() {
-        return "BfsMonitoringServiceImpl";
+        return Services.MONITORING_IMPL;
     }
 }

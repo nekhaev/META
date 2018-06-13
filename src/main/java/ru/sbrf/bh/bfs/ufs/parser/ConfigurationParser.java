@@ -6,6 +6,7 @@ import ru.sbrf.bh.bfs.generator.enums.ParamFields;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import ru.sbrf.bh.bfs.generator.literals.Services;
 import ru.sbrf.bh.bfs.grammar.BfsLexer;
 import ru.sbrf.bh.bfs.grammar.BfsParser;
 import ru.sbrf.bh.bfs.model.Adapter;
@@ -90,7 +91,7 @@ public class ConfigurationParser {
                             && fields.get(ApiFields.RQ) != null
                             && fields.get(ApiFields.RS) != null
                             ) {
-                        final Api api = new Api().setName(apiName).setMonitoringService(s.get(ParamFields.MONITORING_SERVICE.getField())+".BfsMonitoringService");
+                        final Api api = new Api().setName(apiName).setMonitoringService(s.get(ParamFields.MONITORING_SERVICE.getField())+"."+ Services.MONITORING);
 
                         Arrays.stream(ApiFields.values()).forEach(apiField -> {
                             try {

@@ -1,7 +1,9 @@
 package ru.sbrf.bh.bfs.generator.type.service;
 
+import com.squareup.javapoet.MethodSpec;
 import ru.sbrf.bh.bfs.generator.type.TypePoet;
 
+import javax.lang.model.element.Modifier;
 import java.io.File;
 
 /**
@@ -12,5 +14,9 @@ public abstract class ServiceTypePoet extends TypePoet<String> {
 
     public void makeSimple(String packageName, File outputDir){
         makeSimple(packageName,getServiceName(),outputDir);
+    }
+
+    public MethodSpec addAbstractModifier(MethodSpec spec) {
+        return spec.toBuilder().addModifiers(Modifier.ABSTRACT).build();
     }
 }

@@ -1,6 +1,8 @@
 package ru.sbrf.bh.bfs.util;
 
 import com.squareup.javapoet.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import ru.sbrf.bh.bfs.generator.literals.BeanNames;
 
 import javax.lang.model.element.Modifier;
 
@@ -16,16 +18,11 @@ public class CommonUtil {
                 .build();
     }
 
-    public static FieldSpec beanField(ClassName serviceName) {
-        return FieldSpec.builder(serviceName, serviceBean(serviceName))
+    public static FieldSpec beanField(TypeName serviceName,String beanName) {
+        return FieldSpec.builder(serviceName, beanName)
                 .addModifiers(Modifier.PRIVATE)
+                .addAnnotation(Autowired.class)
                 .build();
     }
-
-    public static String serviceBean(ClassName serviceName) {
-        String simpleServiceName = serviceName.simpleName();
-        return simpleServiceName.substring(0, 1).toLowerCase() + simpleServiceName.substring(1);
-    }
-
 
 }
