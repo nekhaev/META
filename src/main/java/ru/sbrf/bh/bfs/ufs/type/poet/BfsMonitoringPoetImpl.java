@@ -1,11 +1,8 @@
 package ru.sbrf.bh.bfs.ufs.type.poet;
 
 import com.squareup.javapoet.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import ru.sbrf.bh.bfs.generator.literals.ControlFlow;
 import ru.sbrf.bh.bfs.generator.literals.Services;
-import ru.sbrf.bh.bfs.generator.method.MethodPoet;
-import ru.sbrf.bh.bfs.generator.type.service.ServiceTypePoet;
 import ru.sbrf.bh.bfs.util.CommonUtil;
 
 import javax.lang.model.element.Modifier;

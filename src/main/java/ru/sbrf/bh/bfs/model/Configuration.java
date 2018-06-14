@@ -3,6 +3,7 @@ package ru.sbrf.bh.bfs.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Конфигурация для генерации БФС
@@ -11,11 +12,11 @@ import java.util.List;
  */
 public class Configuration {
 
-    private HashMap<String, String> properties;
-    private HashMap<String, String> build;
+    private Map<String, String> properties;
+    private Map<String, String> build;
     private List<Adapter> adapters;
     private List<Api> apis;
-    private HashMap<String, String> services;
+    private Map<String, String> services;
 
     public Configuration() {
         properties = new HashMap<>();
@@ -24,19 +25,19 @@ public class Configuration {
         apis = new ArrayList<>();
     }
 
-    public HashMap<String, String> getProperties() {
+    public Map<String, String> getProperties() {
         return properties;
     }
 
-    public void setProperties(HashMap<String, String> properties) {
+    public void setProperties(Map<String, String> properties) {
         this.properties = properties;
     }
 
-    public HashMap<String, String> getBuild() {
+    public Map<String, String> getBuild() {
         return build;
     }
 
-    public void setBuild(HashMap<String, String> build) {
+    public void setBuild(Map<String, String> build) {
         this.build = build;
     }
 
@@ -56,11 +57,11 @@ public class Configuration {
         this.apis = apis;
     }
 
-    public HashMap<String, String> getServices() {
+    public Map<String, String> getServices() {
         return services;
     }
 
-    public void setServices(HashMap<String, String> services) {
+    public void setServices(Map<String, String> services) {
         this.services = services;
     }
 }

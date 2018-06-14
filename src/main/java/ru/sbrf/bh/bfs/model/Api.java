@@ -1,6 +1,7 @@
 package ru.sbrf.bh.bfs.model;
 
 import com.squareup.javapoet.ClassName;
+import ru.sbrf.bh.bfs.generator.enums.ApiFields;
 
 public class Api {
 

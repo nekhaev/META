@@ -1,7 +1,6 @@
 package ru.sbrf.bh.bfs.ufs.type.poet;
 
 import com.squareup.javapoet.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import ru.sbrf.bh.bfs.generator.enums.ApiFields;
 import ru.sbrf.bh.bfs.generator.literals.BeanNames;
 import ru.sbrf.bh.bfs.generator.literals.ControlFlow;

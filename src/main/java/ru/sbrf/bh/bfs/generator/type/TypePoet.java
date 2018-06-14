@@ -2,7 +2,6 @@ package ru.sbrf.bh.bfs.generator.type;
 
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
-import ru.sbrf.bh.bfs.model.Api;
 
 import java.io.File;
 import java.io.IOException;
