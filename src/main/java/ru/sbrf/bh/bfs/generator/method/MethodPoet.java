@@ -9,5 +9,19 @@ import com.squareup.javapoet.MethodSpec;
 public abstract class MethodPoet<T> {
 
     protected abstract CodeBlock createMethodBlock(T api);
-    protected abstract MethodSpec createMethod(T api);
+    protected abstract void createDeclaration(T param, MethodSpec.Builder specBuilder);
+
+    protected void addMethodBlock(T param, MethodSpec.Builder specBuilder){
+
+        CodeBlock block = createMethodBlock(param);
+        if (block != null)
+            specBuilder.addCode(block);
+    }
+
+    public  MethodSpec createMethod(T api, String name) {
+        MethodSpec.Builder specBuilder =  MethodSpec.methodBuilder(name);
+        createDeclaration(api,specBuilder);
+        addMethodBlock(api,specBuilder);
+        return  specBuilder.build();
+    }
 }

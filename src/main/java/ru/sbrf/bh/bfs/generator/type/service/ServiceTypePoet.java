@@ -13,10 +13,14 @@ public abstract class ServiceTypePoet extends TypePoet<String> {
     public abstract String getServiceName();
 
     public void makeSimple(String packageName, File outputDir){
+        createAdditionalTypes(packageName,outputDir);
         makeSimple(packageName,getServiceName(),outputDir);
     }
 
     public MethodSpec addAbstractModifier(MethodSpec spec) {
         return spec.toBuilder().addModifiers(Modifier.ABSTRACT).build();
     }
+
+    public abstract void createAdditionalTypes(String packageName, File outputDir);
+
 }

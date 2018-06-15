@@ -46,14 +46,14 @@ public class DaPoet extends ApiTypePoet<Api> {
                     .build();
         }
 
-        protected MethodSpec createMethod(Api api){
-            return MethodSpec.methodBuilder(api.getMethodName())
-                    .addParameter(api.getRq(), ApiFields.RQ.getField())
+
+
+        @Override
+        protected void createDeclaration(Api param, MethodSpec.Builder specBuilder) {
+            specBuilder.addParameter(param.getRq(), ApiFields.RQ.getField())
                     .addModifiers(Modifier.PUBLIC)
-                    .returns(api.getRs())
-                    .addCode(createMethodBlock(api))
-                    .addException(Exception.class)
-                    .build();
+                    .returns(param.getRs())
+                    .addException(Exception.class);
         }
     }
 
@@ -75,7 +75,7 @@ public class DaPoet extends ApiTypePoet<Api> {
 
         return TypeSpec.classBuilder(api.getDaClass().simpleName())
                 .addModifiers(Modifier.PUBLIC)
-                .addMethod((new CallMethodPoet()).createMethod(api))
+                .addMethod((new CallMethodPoet()).createMethod(api, api.getMethodName()))
                 .addField(CommonUtil.getLogger(api.getDaClass().simpleName()))
                 .addField(CommonUtil.beanField(api.getMonitoringService(),BeanNames.MONITORING_BEAN))
                 .addField(CommonUtil.beanField(serviceName,BeanNames.INTEGRATION_BEAN))

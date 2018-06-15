@@ -57,10 +57,11 @@ public class ReflectionParser<T extends Supplier<Boolean>&ServiceInitializer<T>>
         return this;
     }
 
-    public static Method getMethod(Class clazz, String name){
+    public static Method getMethod(Class clazz, String name, Class<?>... params){
         try {
-            return clazz.getMethod(name);
+            return clazz.getMethod(name,params);
         } catch (Exception ex){
+            LOGGER.warning("Class: "+ clazz + " Can find method " + name);
             return null;
         }
 

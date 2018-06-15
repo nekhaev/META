@@ -28,7 +28,7 @@ public class FgPoet extends ApiTypePoet<Api> {
     protected TypeSpec createType(Api api) {
         return TypeSpec.classBuilder(api.getFgClass().simpleName())
                 .addModifiers(Modifier.PUBLIC)
-                .addMethod((new ExecuteMethodPoet()).createMethod(api))
+                .addMethod((new ExecuteMethodPoet()).createMethod(api,"execute"))
                 .addField(CommonUtil.getLogger(api.getFgClass().simpleName()))
                 .addField(CommonUtil.beanField(api.getDaClass(), BeanNames.DATA_ACCESS_BEAN))
                 .build();
@@ -36,14 +36,13 @@ public class FgPoet extends ApiTypePoet<Api> {
 
     private static class ExecuteMethodPoet extends MethodPoet<Api> {
 
-        protected MethodSpec createMethod(Api api) {
-            return MethodSpec.methodBuilder("execute")
-                    .addParameter(api.getRq(), ApiFields.RQ.getField())
+
+        @Override
+        protected void createDeclaration(Api param, MethodSpec.Builder specBuilder) {
+            specBuilder.addParameter(param.getRq(), ApiFields.RQ.getField())
                     .addModifiers(Modifier.PUBLIC)
-                    .returns(api.getRs())
-                    .addCode(createMethodBlock(api))
-                    .addException(Exception.class)
-                    .build();
+                    .returns(param.getRs())
+                    .addException(Exception.class);
         }
 
         protected CodeBlock createMethodBlock(Api api) {

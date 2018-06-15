@@ -28,16 +28,16 @@ public class Api implements Supplier<Boolean>, ServiceInitializer<Api>{
     public static final Map apiMap;
     static {
         Map<String, Method> tmpApiMap = new HashMap<>();
-        tmpApiMap.put("fgClass", ReflectionParser.getMethod(Api.class,"setFgClass"));
-        tmpApiMap.put("daClass",ReflectionParser.getMethod(Api.class,"setDaClass"));
-        tmpApiMap.put("rq",ReflectionParser.getMethod(Api.class,"setRq"));
-        tmpApiMap.put("rs",ReflectionParser.getMethod(Api.class,"setRs"));
-        tmpApiMap.put("service",ReflectionParser.getMethod(Api.class,"setService;"));
-        tmpApiMap.put("methodName",ReflectionParser.getMethod(Api.class,"setMethodName"));
-        tmpApiMap.put("name",ReflectionParser.getMethod(Api.class,"setName"));
-        tmpApiMap.put("monitoringFailEventName",ReflectionParser.getMethod(Api.class,"setMonitoringFailEventName"));
-        tmpApiMap.put("monitoringSuccessEventName",ReflectionParser.getMethod(Api.class,"setMonitoringSuccessEventName"));
-        tmpApiMap.put("monitoringMetricName",ReflectionParser.getMethod(Api.class,"setMonitoringMetricName"));
+        tmpApiMap.put("fgClass", ReflectionParser.getMethod(Api.class,"setFgClass",String.class));
+        tmpApiMap.put("daClass",ReflectionParser.getMethod(Api.class,"setDaClass",String.class));
+        tmpApiMap.put("rq",ReflectionParser.getMethod(Api.class,"setRq",String.class));
+        tmpApiMap.put("rs",ReflectionParser.getMethod(Api.class,"setRs",String.class));
+        tmpApiMap.put("service",ReflectionParser.getMethod(Api.class,"setService",String.class));
+        tmpApiMap.put("methodName",ReflectionParser.getMethod(Api.class,"setMethodName",String.class));
+        tmpApiMap.put("name",ReflectionParser.getMethod(Api.class,"setName",String.class));
+        tmpApiMap.put("monitoringFailEventName",ReflectionParser.getMethod(Api.class,"setMonitoringFailEventName",String.class));
+        tmpApiMap.put("monitoringSuccessEventName",ReflectionParser.getMethod(Api.class,"setMonitoringSuccessEventName",String.class));
+        tmpApiMap.put("monitoringMetricName",ReflectionParser.getMethod(Api.class,"setMonitoringMetricName",String.class));
 
         apiMap= Collections.unmodifiableMap(tmpApiMap);
     }

@@ -6,4 +6,6 @@ package ru.sbrf.bh.bfs.generator.literals;
 public interface Services {
     String MONITORING = "BfsMonitoringService";
     String MONITORING_IMPL = "BfsMonitoringServiceImpl";
+    String AUDIT = "BfsAuditService";
+    String AUDIT_IMPL = "BfsAuditServiceImpl";
 }

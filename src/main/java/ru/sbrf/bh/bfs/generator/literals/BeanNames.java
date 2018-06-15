@@ -7,4 +7,5 @@ public interface BeanNames {
     String INTEGRATION_BEAN = "integrationService";
     String DATA_ACCESS_BEAN = "daService";
     String MONITORING_BEAN = "monitoringService";
+    String AUDIT_BEAN = "auditService";
 }

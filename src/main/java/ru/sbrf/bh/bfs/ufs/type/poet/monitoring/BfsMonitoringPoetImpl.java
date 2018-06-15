@@ -1,4 +1,4 @@
-package ru.sbrf.bh.bfs.ufs.type.poet;
+package ru.sbrf.bh.bfs.ufs.type.poet.monitoring;
 
 import com.squareup.javapoet.*;
 import ru.sbrf.bh.bfs.generator.literals.ControlFlow;
@@ -6,6 +6,7 @@ import ru.sbrf.bh.bfs.generator.literals.Services;
 import ru.sbrf.bh.bfs.util.CommonUtil;
 
 import javax.lang.model.element.Modifier;
+import java.io.File;
 
 /**
  * Created by sbt-barsukov-sv on 13.06.2018.
@@ -16,8 +17,8 @@ public class BfsMonitoringPoetImpl extends BfsMonitoringPoet {
         return TypeSpec.classBuilder(param)
                 .addSuperinterface(ClassName.get("", Services.MONITORING))
                 .addModifiers(Modifier.PUBLIC)
-                .addMethod((new StartMethodPoet()).createMethod(param))
-                .addMethod((new StopMethodPoet()).createMethod(param))
+                .addMethod((new StartMethodPoet()).createMethod(param,"start"))
+                .addMethod((new StopMethodPoet()).createMethod(param,"stop"))
                 .addField(CommonUtil.getLogger(param))
                 .addField(CommonUtil.beanField(ClassName.get("ru.sbrf.ufs.platform.monitoring", "MonitoringService"), "monitoringService"))
                 .build();
@@ -52,4 +53,10 @@ public class BfsMonitoringPoetImpl extends BfsMonitoringPoet {
     public String getServiceName() {
         return Services.MONITORING_IMPL;
     }
+
+    /**
+     * Иначе улетим в рекурсию
+     **/
+    @Override
+    public void createAdditionalTypes(String packageName, File outputDir){}
 }

@@ -15,6 +15,7 @@ bfs {
     services {
         bfsMonitoringService = "ru.sbrf.bh.banking.product.smbaccounting.monitoring"
         bfsMonitoringServiceImpl = "ru.sbrf.bh.banking.product.smbaccounting.monitoring"
+        bfsAuditService = "ru.sbrf.bh.banking.product.smbaccounting.audit"
     }
 
     adapters
