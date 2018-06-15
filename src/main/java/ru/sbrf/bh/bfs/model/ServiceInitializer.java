@@ -6,4 +6,5 @@ package ru.sbrf.bh.bfs.model;
 public interface ServiceInitializer<T> {
      T setName(String name);
      T setMonitoringService(String name);
+     T setAuditService(String name);
 }

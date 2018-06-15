@@ -9,10 +9,11 @@ public enum ParamFields {
     SERVICES ("services"),
     BUILD ("build"),
     ADAPTERS ("adapters"),
-
     API ("api"),
-    MONITORING_SERVICE("bfsMonitoringService");
+    MONITORING_SERVICE("bfsMonitoringService"),
+    AUDIT_SERVICE("bfsAuditService");
     private String field;
+
     ParamFields(String field) {
         this.field=field;
     }

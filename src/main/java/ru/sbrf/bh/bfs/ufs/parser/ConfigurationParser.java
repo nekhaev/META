@@ -44,9 +44,15 @@ public class ConfigurationParser extends Parser<BfsParser,Configuration>{
             parserMap.get(ParamFields.SERVICES).parse(ParamFields.SERVICES.getField(),gc,s);
             parserMap.get(ParamFields.BUILD).parse(ParamFields.BUILD.getField(),gc,b);
             parserMap.get(ParamFields.ADAPTERS).parse(ParamFields.ADAPTERS.getField(),gc,ad);
-            ((ReflectionParser)parserMap.get(ParamFields.API))
-                    .setMonitoringServiceName(s.get(ParamFields.MONITORING_SERVICE.getField())+"."+ Services.MONITORING)
-                    .parse(ParamFields.API.getField(),gc,apis);
+
+            ReflectionParser apiParser = (ReflectionParser)parserMap.get(ParamFields.API);
+            //Можем не генерить мониторинг и аудит
+            if (s.get(ParamFields.MONITORING_SERVICE.getField()) != null)
+                apiParser.setMonitoringServiceName(s.get(ParamFields.MONITORING_SERVICE.getField())+"."+ Services.MONITORING);
+            if (s.get(ParamFields.AUDIT_SERVICE.getField()) != null)
+                apiParser.setAuditServiceName(s.get(ParamFields.AUDIT_SERVICE.getField())+"."+ Services.AUDIT);
+
+            apiParser.parse(ParamFields.API.getField(),gc,apis);
         }
         target.setProperties(p);
         target.setBuild(b);

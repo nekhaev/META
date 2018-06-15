@@ -24,6 +24,7 @@ public class Api implements Supplier<Boolean>, ServiceInitializer<Api>{
     private String monitoringFailEventName = "BFS_FAIL_EVENT";
     private String monitoringMetricName = "BFS_METRIC";
     private ClassName monitoringService;
+    private ClassName auditService;
 
     public static final Map apiMap;
     static {
@@ -170,6 +171,20 @@ public class Api implements Supplier<Boolean>, ServiceInitializer<Api>{
 
     public Api setMonitoringService(String monitoringService) {
         this.monitoringService = toCN(monitoringService);
+        return this;
+    }
+
+    public ClassName getAuditService() {
+        return auditService;
+    }
+
+    public Api setAuditService(ClassName auditService) {
+        this.auditService = auditService;
+        return this;
+    }
+
+    public Api setAuditService(String auditService) {
+        this.auditService = toCN(auditService);
         return this;
     }
 

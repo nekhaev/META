@@ -23,27 +23,34 @@ public class DaPoet extends ApiTypePoet<Api> {
 
     private static class CallMethodPoet extends MethodPoet<Api> {
         protected CodeBlock createMethodBlock(Api api) {
-            return CodeBlock.builder()
+            CodeBlock.Builder builder =  CodeBlock.builder()
                     .addStatement(Statement.INITIALIZE_RESPONSE, api.getRs())
-                    .addStatement(Statement.INITIALIZE_SUCCESS_FLAG)
-                    .addStatement(Statement.MONITORING_SERVICE_START, api.getMonitoringSuccessEventName())
-                    .beginControlFlow(ControlFlow.TRY)
+                    .addStatement(Statement.INITIALIZE_SUCCESS_FLAG);
+
+            if(api.getMonitoringService() != null)
+                builder.addStatement(Statement.MONITORING_SERVICE_START, api.getMonitoringSuccessEventName());
+
+            builder.beginControlFlow(ControlFlow.TRY)
                     .addStatement(Statement.LOGGER_INFO_LEVEL, BEFORE_DA_CALL)
                     .addStatement(Statement.DA_SEND_REQUEST
                             , BeanNames.INTEGRATION_BEAN
-                            , ClassName.get("ru.sbrf.ufs.integration.module","RequestDescriptionImpl"))
-                    .addStatement(Statement.MONITORING_SERVICE_STOP,api.getMonitoringSuccessEventName(),api.getMonitoringMetricName())
-                    .addStatement(Statement.LOGGER_INFO_LEVEL, AFTER_DA_CALL)
+                            , ClassName.get("ru.sbrf.ufs.integration.module","RequestDescriptionImpl"));
+
+            if(api.getMonitoringService() != null)
+                builder.addStatement(Statement.MONITORING_SERVICE_STOP,api.getMonitoringSuccessEventName(),api.getMonitoringMetricName());
+
+            builder.addStatement(Statement.LOGGER_INFO_LEVEL, AFTER_DA_CALL)
                     .addStatement(Statement.CHANGE_SUCCESS_FLAG)
-                    .nextControlFlow(ControlFlow.CATCH, Exception.class)
-                    .addStatement(Statement.MONITORING_SERVICE_STOP,api.getMonitoringFailEventName(),api.getMonitoringMetricName())
-                    .addStatement(Statement.EXCEPTION_THROW)
+                    .nextControlFlow(ControlFlow.CATCH, Exception.class);
+            if(api.getMonitoringService() != null)
+                builder.addStatement(Statement.MONITORING_SERVICE_STOP,api.getMonitoringFailEventName(),api.getMonitoringMetricName());
+            builder.addStatement(Statement.EXCEPTION_THROW)
                     .nextControlFlow(ControlFlow.FINALLY)
                     .addStatement(Statement.LOGGER_INFO_LEVEL, EXIT_DA_CALL)
                     .endControlFlow()
 
-                    .addStatement(Statement.RETURN_RESPONSE)
-                    .build();
+                    .addStatement(Statement.RETURN_RESPONSE);
+            return  builder.build();
         }
 
 
@@ -73,13 +80,16 @@ public class DaPoet extends ApiTypePoet<Api> {
                         ,api.getRq()
                         ,api.getRs());
 
-        return TypeSpec.classBuilder(api.getDaClass().simpleName())
+        TypeSpec.Builder typeSpec = TypeSpec.classBuilder(api.getDaClass().simpleName())
                 .addModifiers(Modifier.PUBLIC)
                 .addMethod((new CallMethodPoet()).createMethod(api, api.getMethodName()))
-                .addField(CommonUtil.getLogger(api.getDaClass().simpleName()))
-                .addField(CommonUtil.beanField(api.getMonitoringService(),BeanNames.MONITORING_BEAN))
-                .addField(CommonUtil.beanField(serviceName,BeanNames.INTEGRATION_BEAN))
-                .build();
+                .addField(CommonUtil.getLogger(api.getDaClass().simpleName()));
+        if (api.getMonitoringService() != null)
+            typeSpec.addField(CommonUtil.beanField(api.getMonitoringService(),BeanNames.MONITORING_BEAN));
+        if (api.getAuditService() != null)
+            typeSpec.addField(CommonUtil.beanField(api.getAuditService(),BeanNames.AUDIT_BEAN));
+        typeSpec.addField(CommonUtil.beanField(serviceName,BeanNames.INTEGRATION_BEAN));
+        return typeSpec.build();
     }
 //TODO
     @Deprecated

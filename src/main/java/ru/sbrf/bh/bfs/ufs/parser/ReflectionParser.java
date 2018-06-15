@@ -16,6 +16,8 @@ import java.util.function.Supplier;
 public class ReflectionParser<T extends Supplier<Boolean>&ServiceInitializer<T>> extends Parser<GroupContext,List<T>> {
 
     private String monitoringServiceName;
+    private String auditServiceName;
+
     private Class<T> clazz;
     private Map<String,Method> mapping;
 
@@ -29,7 +31,10 @@ public class ReflectionParser<T extends Supplier<Boolean>&ServiceInitializer<T>>
 
             for (GroupContext igc : gc.group()) {
                 try {
-                    final T instance = clazz.newInstance().setName(igc.ID().getText()).setMonitoringService(monitoringServiceName);
+                    final T instance = clazz.newInstance()
+                            .setName(igc.ID().getText())
+                            .setMonitoringService(monitoringServiceName)
+                            .setAuditService(auditServiceName);
 
                     for (PropertyContext pc : igc.property()) {
                         final String text = trm(pc.STRING().getText());
@@ -54,6 +59,11 @@ public class ReflectionParser<T extends Supplier<Boolean>&ServiceInitializer<T>>
 
     public ReflectionParser setMonitoringServiceName(String monitoringServiceName) {
         this.monitoringServiceName = monitoringServiceName;
+        return this;
+    }
+
+    public ReflectionParser setAuditServiceName(String auditServiceName) {
+        this.auditServiceName = auditServiceName;
         return this;
     }
 
