@@ -1,7 +1,6 @@
 package ru.sbrf.bh.bfs.ufs.parser;
 
 import ru.sbrf.bh.bfs.generator.enums.ArtifactFields;
-import ru.sbrf.bh.bfs.generator.enums.ParamFields;
 import ru.sbrf.bh.bfs.generator.parser.Parser;
 import ru.sbrf.bh.bfs.model.Adapter;
 import ru.sbrf.bh.bfs.grammar.BfsParser.*;
@@ -14,7 +13,7 @@ import java.util.List;
 public class MavenDependencyParser extends Parser<GroupContext,List<Adapter>> {
 
     public void parse(String key, GroupContext gc, List<Adapter> adapters) {
-        if (ParamFields.ADAPTERS.getField().equals(gc.ID().getText())) {
+        if (key.equals(gc.ID().getText())) {
             for (GroupContext igc : gc.group()) {
                 String groupId = null, artifactId = null, version = null;
                 for (PropertyContext pc : igc.property()) {

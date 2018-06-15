@@ -1,9 +1,15 @@
 package ru.sbrf.bh.bfs.model;
 
 import com.squareup.javapoet.ClassName;
-import ru.sbrf.bh.bfs.generator.enums.ApiFields;
+import ru.sbrf.bh.bfs.ufs.parser.ReflectionParser;
 
-public class Api {
+import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
+public class Api implements Supplier<Boolean>, ServiceInitializer<Api>{
 
     private static final String DEFAULT_METHOD_NAME = "call";
 
@@ -18,6 +24,23 @@ public class Api {
     private String monitoringFailEventName = "BFS_FAIL_EVENT";
     private String monitoringMetricName = "BFS_METRIC";
     private ClassName monitoringService;
+
+    public static final Map apiMap;
+    static {
+        Map<String, Method> tmpApiMap = new HashMap<>();
+        tmpApiMap.put("fgClass", ReflectionParser.getMethod(Api.class,"setFgClass"));
+        tmpApiMap.put("daClass",ReflectionParser.getMethod(Api.class,"setDaClass"));
+        tmpApiMap.put("rq",ReflectionParser.getMethod(Api.class,"setRq"));
+        tmpApiMap.put("rs",ReflectionParser.getMethod(Api.class,"setRs"));
+        tmpApiMap.put("service",ReflectionParser.getMethod(Api.class,"setService;"));
+        tmpApiMap.put("methodName",ReflectionParser.getMethod(Api.class,"setMethodName"));
+        tmpApiMap.put("name",ReflectionParser.getMethod(Api.class,"setName"));
+        tmpApiMap.put("monitoringFailEventName",ReflectionParser.getMethod(Api.class,"setMonitoringFailEventName"));
+        tmpApiMap.put("monitoringSuccessEventName",ReflectionParser.getMethod(Api.class,"setMonitoringSuccessEventName"));
+        tmpApiMap.put("monitoringMetricName",ReflectionParser.getMethod(Api.class,"setMonitoringMetricName"));
+
+        apiMap= Collections.unmodifiableMap(tmpApiMap);
+    }
 
     public ClassName getFgClass() {
         return fgClass;
@@ -160,5 +183,14 @@ public class Api {
                 ", monitoringMetricName='" + monitoringMetricName + '\'' +
                 ", monitoringService='" + monitoringService + '\'' +
                 '}';
+    }
+
+
+    @Override
+    public Boolean get() {
+        return this.getFgClass() != null
+                && this.getDaClass() != null
+                && this.getRq() != null
+                && this.getRs() != null;
     }
 }

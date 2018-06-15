@@ -25,7 +25,7 @@ public class ConfigurationParser extends Parser<BfsParser,Configuration>{
         tmpMap.put(ParamFields.SERVICES,toHashMapParser);
         tmpMap.put(ParamFields.BUILD,toHashMapParser);
         tmpMap.put(ParamFields.ADAPTERS,new MavenDependencyParser());
-        tmpMap.put(ParamFields.API,new ApiParserHelper());
+        tmpMap.put(ParamFields.API,new ReflectionParser(Api.class,Api.apiMap));
         parserMap = Collections.unmodifiableMap(tmpMap);
     }
 
@@ -44,7 +44,7 @@ public class ConfigurationParser extends Parser<BfsParser,Configuration>{
             parserMap.get(ParamFields.SERVICES).parse(ParamFields.SERVICES.getField(),gc,s);
             parserMap.get(ParamFields.BUILD).parse(ParamFields.BUILD.getField(),gc,b);
             parserMap.get(ParamFields.ADAPTERS).parse(ParamFields.ADAPTERS.getField(),gc,ad);
-            ((ApiParserHelper)parserMap.get(ParamFields.API))
+            ((ReflectionParser)parserMap.get(ParamFields.API))
                     .setMonitoringServiceName(s.get(ParamFields.MONITORING_SERVICE.getField())+"."+ Services.MONITORING)
                     .parse(ParamFields.API.getField(),gc,apis);
         }
